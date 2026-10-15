@@ -1,0 +1,36 @@
+# Dependencies and generated output
+node_modules/
+dist/
+.output/
+.vinxi/
+src/routeTree.gen.ts
+
+# Local configuration and secrets (keep example templates)
+.env
+.env.*
+!.env.example
+!.env.sample
+*.local
+
+# Caches and test output
+.cache/
+.vite/
+.turbo/
+coverage/
+*.tsbuildinfo
+.codegraph/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*~
+*.swp
