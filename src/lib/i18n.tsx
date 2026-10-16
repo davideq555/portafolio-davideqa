@@ -12,6 +12,14 @@ const dict = {
       contact: "Contact",
       cta: "Get in touch",
     },
+    theme: {
+      label: "Theme",
+      open: "Open theme selector",
+      close: "Close theme selector",
+      reset: "Reset to default",
+      default: "Default",
+      names: { amber: "Amber", violet: "Violet", cyan: "Cyan", rose: "Rose" },
+    },
     hero: {
       pill: "Available for backend & AI automation work",
       role: "Backend & AI Automation Engineer",
@@ -123,6 +131,14 @@ const dict = {
       stack: "Stack",
       contact: "Contacto",
       cta: "Hablemos",
+    },
+    theme: {
+      label: "Tema",
+      open: "Abrir selector de tema",
+      close: "Cerrar selector de tema",
+      reset: "Restablecer tema predeterminado",
+      default: "Predeterminado",
+      names: { amber: "Ámbar", violet: "Violeta", cyan: "Cian", rose: "Rosa" },
     },
     hero: {
       pill: "Disponible para proyectos de backend y automatización con IA",

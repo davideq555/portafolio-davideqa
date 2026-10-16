@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import {
   Server,
   Cpu,
@@ -18,6 +18,9 @@ import {
   Menu,
   X,
   Languages,
+  Palette,
+  Check,
+  RotateCcw,
 } from "lucide-react";
 import { LangProvider, useLang } from "@/lib/i18n";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -96,6 +99,152 @@ function LangToggle() {
   );
 }
 
+type Theme = "green" | "amber" | "violet" | "cyan" | "rose";
+
+const THEME_OPTIONS: Theme[] = ["green", "amber", "violet", "cyan", "rose"];
+const THEME_STORAGE_KEY = "portfolio-theme";
+
+const ThemeContext = createContext<{
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}>({
+  theme: "green",
+  setTheme: () => {},
+  open: false,
+  setOpen: () => {},
+});
+
+function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [theme, setThemeState] = useState<Theme>("green");
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+    if (stored && THEME_OPTIONS.includes(stored as Theme)) setThemeState(stored as Theme);
+  }, []);
+
+  useEffect(() => {
+    if (theme === "green") delete document.documentElement.dataset["theme"];
+    else document.documentElement.dataset["theme"] = theme;
+  }, [theme]);
+
+  const setTheme = (next: Theme) => {
+    setThemeState(next);
+    window.localStorage.setItem(THEME_STORAGE_KEY, next);
+  };
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.matches("input, textarea, select, [contenteditable='true']")) return;
+      if (event.key.toLowerCase() === "t") {
+        event.preventDefault();
+        setOpen((value) => !value);
+      }
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, []);
+
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme, open, setOpen }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+
+function ThemePicker() {
+  const { theme, setTheme, open, setOpen } = useContext(ThemeContext);
+  const { t } = useLang();
+  const pickerRef = useRef<HTMLDivElement>(null);
+  const firstOptionRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (open) firstOptionRef.current?.focus();
+  }, [open]);
+
+  useEffect(() => {
+    const onPointerDown = (event: PointerEvent) => {
+      if (open && !pickerRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [open, setOpen]);
+
+  const names = {
+    green: t.theme.default,
+    amber: t.theme.names.amber,
+    violet: t.theme.names.violet,
+    cyan: t.theme.names.cyan,
+    rose: t.theme.names.rose,
+  } satisfies Record<Theme, string>;
+
+  return (
+    <div ref={pickerRef} className="relative">
+      <button
+        type="button"
+        aria-label={open ? t.theme.close : t.theme.open}
+        aria-expanded={open}
+        aria-haspopup="dialog"
+        onClick={() => setOpen(!open)}
+        className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 font-mono text-xs text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+      >
+        <Palette size={14} aria-hidden="true" />
+        <span>{t.theme.label}</span>
+        <kbd className="hidden rounded border border-border px-1 text-[10px] text-muted-foreground sm:inline">
+          T
+        </kbd>
+      </button>
+      {open && (
+        <div
+          role="dialog"
+          aria-label={t.theme.open}
+          className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-52 rounded-lg border border-border bg-popover p-2 shadow-xl shadow-black/20"
+        >
+          <p className="px-2 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+            {t.theme.label}
+          </p>
+          <div className="space-y-1">
+            {THEME_OPTIONS.map((option, index) => (
+              <button
+                key={option}
+                ref={index === 0 ? firstOptionRef : undefined}
+                type="button"
+                aria-pressed={theme === option}
+                onClick={() => {
+                  setTheme(option);
+                  setOpen(false);
+                }}
+                className="flex w-full items-center justify-between rounded-md px-2 py-2 text-left text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground aria-pressed:bg-primary/10 aria-pressed:text-primary"
+              >
+                <span className="flex items-center gap-2">
+                  <span className={`theme-swatch theme-swatch-${option}`} aria-hidden="true" />
+                  {names[option]}
+                </span>
+                {theme === option && <Check size={15} aria-hidden="true" />}
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setTheme("green");
+              setOpen(false);
+            }}
+            className="mt-2 flex w-full items-center gap-2 border-t border-border px-2 pt-2 text-left text-xs text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <RotateCcw size={13} aria-hidden="true" />
+            {t.theme.reset}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ---------------- Nav ---------------- */
 function Nav() {
   const [open, setOpen] = useState(false);
@@ -138,7 +287,6 @@ function Nav() {
               {l.label}
             </a>
           ))}
-          <LangToggle />
           <a
             href="#contact"
             className="rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:text-primary"
@@ -146,12 +294,13 @@ function Nav() {
             {t.nav.cta}
           </a>
         </div>
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-2">
+          <ThemePicker />
           <LangToggle />
           <button
+            className="grid h-10 w-10 place-items-center rounded-md border border-border text-foreground md:hidden"
             aria-label="Toggle menu"
             onClick={() => setOpen((v) => !v)}
-            className="grid h-10 w-10 place-items-center rounded-md border border-border text-foreground"
           >
             {open ? <X size={18} /> : <Menu size={18} />}
           </button>
@@ -248,6 +397,7 @@ function colorTokenToNumber(token: string) {
 
 function VantaNetwork() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { theme } = useContext(ThemeContext);
 
   useEffect(() => {
     const element = containerRef.current;
@@ -256,38 +406,43 @@ function VantaNetwork() {
 
     let cancelled = false;
     let effect: VantaEffect | undefined;
+    let frameId: number | undefined;
 
     void Promise.all([import("three"), import("vanta/dist/vanta.net.min")]).then(
       ([threeModule, vantaModule]) => {
         if (cancelled || !containerRef.current) return;
-        const importedNetwork = vantaModule.default;
-        const createNetwork =
-          typeof importedNetwork === "function" ? importedNetwork : importedNetwork.default;
-        effect = createNetwork({
-          el: containerRef.current,
-          THREE: threeModule,
-          mouseControls: true,
-          touchControls: true,
-          gyroControls: false,
-          minHeight: 200,
-          minWidth: 200,
-          scale: 1,
-          scaleMobile: 1,
-          color: colorTokenToNumber("--primary"),
-          backgroundAlpha: 0,
-          points: window.innerWidth < 640 ? 7 : 10,
-          maxDistance: window.innerWidth < 640 ? 16 : 20,
-          spacing: window.innerWidth < 640 ? 20 : 18,
-          showDots: true,
-        }) as VantaEffect;
+        frameId = window.requestAnimationFrame(() => {
+          if (cancelled || !containerRef.current) return;
+          const importedNetwork = vantaModule.default;
+          const createNetwork =
+            typeof importedNetwork === "function" ? importedNetwork : importedNetwork.default;
+          effect = createNetwork({
+            el: containerRef.current,
+            THREE: threeModule,
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200,
+            minWidth: 200,
+            scale: 1,
+            scaleMobile: 1,
+            color: colorTokenToNumber("--primary"),
+            backgroundAlpha: 0,
+            points: window.innerWidth < 640 ? 7 : 10,
+            maxDistance: window.innerWidth < 640 ? 16 : 20,
+            spacing: window.innerWidth < 640 ? 20 : 18,
+            showDots: true,
+          }) as VantaEffect;
+        });
       },
     );
 
     return () => {
       cancelled = true;
+      if (frameId !== undefined) window.cancelAnimationFrame(frameId);
       effect?.destroy();
     };
-  }, []);
+  }, [theme]);
 
   return (
     <div
@@ -765,18 +920,20 @@ function Footer() {
 function Portfolio() {
   return (
     <LangProvider>
-      <div className="min-h-screen bg-background text-foreground">
-        <Nav />
-        <main>
-          <Hero />
-          <About />
-          <WhatIBuild />
-          <ProjectsAndExperiments />
-          <TechStack />
-          <Contact />
-        </main>
-        <Footer />
-      </div>
+      <ThemeProvider>
+        <div className="min-h-screen bg-background text-foreground">
+          <Nav />
+          <main>
+            <Hero />
+            <About />
+            <WhatIBuild />
+            <ProjectsAndExperiments />
+            <TechStack />
+            <Contact />
+          </main>
+          <Footer />
+        </div>
+      </ThemeProvider>
     </LangProvider>
   );
 }
