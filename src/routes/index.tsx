@@ -259,6 +259,26 @@ function ThemePicker() {
             aria-labelledby="theme-picker-title"
             className="theme-picker-panel flex max-h-[min(42rem,calc(100dvh-2rem))] w-full max-w-lg flex-col rounded-xl border border-border bg-popover p-4 font-mono shadow-2xl shadow-black/30 sm:p-5"
             onMouseDown={(event) => event.stopPropagation()}
+            onKeyDown={(event) => {
+              const target = event.target as HTMLElement;
+              const isTextField = target.matches(
+                "input, textarea, select, [contenteditable='true']",
+              );
+              if (
+                !isTextField &&
+                event.key.length === 1 &&
+                event.key !== " " &&
+                !event.ctrlKey &&
+                !event.metaKey &&
+                !event.altKey
+              ) {
+                event.preventDefault();
+                event.stopPropagation();
+                searchRef.current?.focus();
+                setQuery((value) => value + event.key);
+                setHighlightedIndex(0);
+              }
+            }}
           >
             <div className="flex items-start justify-between gap-4">
               <div>
