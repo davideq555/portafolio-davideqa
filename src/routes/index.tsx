@@ -166,7 +166,6 @@ function ThemeProvider({ children }: { children: React.ReactNode }) {
         event.preventDefault();
         setOpen((value) => !value);
       }
-      if (event.key === "Escape") setOpen(false);
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
@@ -182,32 +181,52 @@ function ThemeProvider({ children }: { children: React.ReactNode }) {
 function ThemePicker() {
   const { theme, setTheme, open, setOpen } = useContext(ThemeContext);
   const { t } = useLang();
-  const pickerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
+  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const [query, setQuery] = useState("");
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
 
   useEffect(() => {
     if (open) {
       setQuery("");
+      const selectedIndex = THEME_OPTIONS.indexOf(theme);
+      setHighlightedIndex(selectedIndex >= 0 ? selectedIndex : 0);
       searchRef.current?.focus();
     }
-  }, [open]);
+  }, [open, theme]);
 
   useEffect(() => {
-    const onPointerDown = (event: PointerEvent) => {
-      if (open && !pickerRef.current?.contains(event.target as Node)) setOpen(false);
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
     };
-    document.addEventListener("pointerdown", onPointerDown);
-    return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [open, setOpen]);
+  }, [open]);
 
   const filteredThemes = THEME_OPTIONS.filter((option) =>
     option.toLowerCase().includes(query.trim().toLowerCase()),
   );
+  const closePicker = () => {
+    setOpen(false);
+    triggerRef.current?.focus();
+  };
+  const moveHighlight = (nextIndex: number) => {
+    if (!filteredThemes.length) return;
+    const wrappedIndex = (nextIndex + filteredThemes.length) % filteredThemes.length;
+    setHighlightedIndex(wrappedIndex);
+    optionRefs.current[wrappedIndex]?.focus();
+  };
+  const selectTheme = (option: Theme) => {
+    setTheme(option);
+    closePicker();
+  };
 
   return (
-    <div ref={pickerRef} className="relative">
+    <div>
       <button
+        ref={triggerRef}
         type="button"
         aria-label={open ? t.theme.close : t.theme.open}
         aria-expanded={open}
@@ -223,50 +242,125 @@ function ThemePicker() {
       </button>
       {open && (
         <div
-          role="dialog"
-          aria-label={t.theme.open}
-          className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-[min(19rem,calc(100vw-2rem))] rounded-md border border-border bg-popover p-2 font-mono shadow-xl shadow-black/20"
+          className="theme-picker-overlay fixed inset-0 z-[60] flex items-center justify-center bg-black/55 p-4 backdrop-blur-[2px] sm:p-6"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) closePicker();
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
+              event.preventDefault();
+              closePicker();
+            }
+          }}
         >
-          <label className="flex items-center gap-2 rounded border border-input bg-background/70 px-2.5 py-2 text-xs text-muted-foreground focus-within:border-primary">
-            <Search size={14} aria-hidden="true" />
-            <span className="sr-only">{t.theme.search}</span>
-            <input
-              ref={searchRef}
-              type="search"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder={t.theme.search}
-              className="min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted-foreground"
-            />
-          </label>
-          <div className="mt-2 max-h-64 space-y-0.5 overflow-y-auto pr-0.5" role="listbox">
-            {filteredThemes.map((option) => (
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="theme-picker-title"
+            className="theme-picker-panel flex max-h-[min(42rem,calc(100dvh-2rem))] w-full max-w-lg flex-col rounded-xl border border-border bg-popover p-4 font-mono shadow-2xl shadow-black/30 sm:p-5"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.18em] text-primary">
+                  {t.theme.label}
+                </p>
+                <h2
+                  id="theme-picker-title"
+                  className="mt-1 font-display text-lg font-semibold text-foreground"
+                >
+                  {t.theme.dialogTitle}
+                </h2>
+              </div>
               <button
-                key={option}
                 type="button"
-                role="option"
-                aria-selected={theme === option}
-                aria-pressed={theme === option}
-                onClick={() => {
-                  setTheme(option);
-                  setOpen(false);
-                }}
-                className="flex w-full items-center justify-between rounded px-2 py-2 text-left text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground aria-pressed:bg-primary/10 aria-pressed:text-primary"
+                aria-label={t.theme.close}
+                onClick={closePicker}
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-md border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
               >
-                <span className="flex items-center gap-2">
-                  <span className={`theme-swatch theme-swatch-${option}`} aria-hidden="true" />
-                  <span>{THEME_LABELS[option]}</span>
-                </span>
-                {theme === option && <Check size={15} aria-hidden="true" />}
+                <X size={18} aria-hidden="true" />
               </button>
-            ))}
-            {!filteredThemes.length && (
-              <p className="px-2 py-3 text-xs text-muted-foreground">{t.theme.noResults}</p>
-            )}
+            </div>
+            <label className="mt-4 flex min-h-11 items-center gap-2 rounded border border-input bg-background/70 px-3 py-2 text-xs text-muted-foreground focus-within:border-primary">
+              <Search size={14} aria-hidden="true" />
+              <span className="sr-only">{t.theme.search}</span>
+              <input
+                ref={searchRef}
+                type="search"
+                value={query}
+                onChange={(event) => {
+                  setQuery(event.target.value);
+                  setHighlightedIndex(0);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "ArrowDown") {
+                    event.preventDefault();
+                    moveHighlight(0);
+                  } else if (event.key === "ArrowUp") {
+                    event.preventDefault();
+                    moveHighlight(filteredThemes.length - 1);
+                  } else if (event.key === "Enter" && filteredThemes[highlightedIndex]) {
+                    event.preventDefault();
+                    selectTheme(filteredThemes[highlightedIndex]);
+                  }
+                }}
+                placeholder={t.theme.search}
+                className="min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted-foreground"
+              />
+            </label>
+            <div
+              className="mt-3 min-h-0 flex-1 space-y-1 overflow-y-auto pr-1"
+              role="listbox"
+              aria-label={t.theme.dialogTitle}
+            >
+              {filteredThemes.map((option, index) => (
+                <button
+                  key={option}
+                  ref={(element) => {
+                    optionRefs.current[index] = element;
+                  }}
+                  type="button"
+                  role="option"
+                  aria-selected={theme === option}
+                  aria-pressed={theme === option}
+                  data-highlighted={highlightedIndex === index ? "true" : undefined}
+                  onFocus={() => setHighlightedIndex(index)}
+                  onKeyDown={(event) => {
+                    if (event.key === "ArrowDown") {
+                      event.preventDefault();
+                      moveHighlight(index + 1);
+                    } else if (event.key === "ArrowUp") {
+                      event.preventDefault();
+                      moveHighlight(index - 1);
+                    } else if (event.key === "Home") {
+                      event.preventDefault();
+                      moveHighlight(0);
+                    } else if (event.key === "End") {
+                      event.preventDefault();
+                      moveHighlight(filteredThemes.length - 1);
+                    } else if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      selectTheme(option);
+                    }
+                  }}
+                  onClick={() => selectTheme(option)}
+                  className="flex min-h-11 w-full items-center justify-between rounded px-3 py-2 text-left text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground aria-pressed:bg-primary/10 aria-pressed:text-primary data-[highlighted=true]:bg-accent data-[highlighted=true]:text-foreground"
+                >
+                  <span className="flex items-center gap-2">
+                    <span className={`theme-swatch theme-swatch-${option}`} aria-hidden="true" />
+                    <span>{THEME_LABELS[option]}</span>
+                  </span>
+                  {theme === option && <Check size={15} aria-hidden="true" />}
+                </button>
+              ))}
+              {!filteredThemes.length && (
+                <p className="px-2 py-3 text-xs text-muted-foreground">{t.theme.noResults}</p>
+              )}
+            </div>
+            <p className="mt-3 border-t border-border px-2 pt-3 text-[10px] text-muted-foreground">
+              {t.theme.documentation}
+            </p>
           </div>
-          <p className="mt-2 border-t border-border px-2 pt-2 text-[10px] text-muted-foreground">
-            {t.theme.documentation}
-          </p>
         </div>
       )}
     </div>
