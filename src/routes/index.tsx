@@ -114,18 +114,20 @@ const THEME_OPTIONS = [
 type Theme = (typeof THEME_OPTIONS)[number];
 const DEFAULT_THEME: Theme = "ayu-mirage";
 const THEME_STORAGE_KEY = "portfolio-theme";
-const THEME_LABELS: Record<Theme, string> = {
-  dracula: "Dracula",
-  "tokyo-night": "Tokyo Night",
-  "one-dark": "One Dark",
-  nord: "Nord",
-  "catppuccin-mocha": "Catppuccin Mocha",
-  "ayu-mirage": "Ayu Mirage",
-  "gruvbox-dark": "Gruvbox Dark",
-  "ayu-light": "Ayu Light",
-  "solarized-light": "Solarized Light",
-  "one-light": "One Light",
-};
+type ThemeMode = "dark" | "light";
+type ThemeMetadata = { label: string; mode: ThemeMode; vantaColor: number };
+const THEME_CONFIG = {
+  dracula: { label: "Dracula", mode: "dark", vantaColor: 0x67e8f9 },
+  "tokyo-night": { label: "Tokyo Night", mode: "dark", vantaColor: 0x5eead4 },
+  "one-dark": { label: "One Dark", mode: "dark", vantaColor: 0x7dd3fc },
+  nord: { label: "Nord", mode: "dark", vantaColor: 0x93c5fd },
+  "catppuccin-mocha": { label: "Catppuccin Mocha", mode: "dark", vantaColor: 0xc4b5fd },
+  "ayu-mirage": { label: "Ayu Mirage", mode: "dark", vantaColor: 0xfcd34d },
+  "gruvbox-dark": { label: "Gruvbox Dark", mode: "dark", vantaColor: 0xfacc15 },
+  "ayu-light": { label: "Ayu Light", mode: "light", vantaColor: 0x263238 },
+  "solarized-light": { label: "Solarized Light", mode: "light", vantaColor: 0x174a5b },
+  "one-light": { label: "One Light", mode: "light", vantaColor: 0x1f3a5f },
+} satisfies Record<Theme, ThemeMetadata>;
 
 const ThemeContext = createContext<{
   theme: Theme;
@@ -368,7 +370,7 @@ function ThemePicker() {
                 >
                   <span className="flex items-center gap-2">
                     <span className={`theme-swatch theme-swatch-${option}`} aria-hidden="true" />
-                    <span>{THEME_LABELS[option]}</span>
+                    <span>{THEME_CONFIG[option].label}</span>
                   </span>
                   {theme === option && <Check size={15} aria-hidden="true" />}
                 </button>
@@ -508,25 +510,10 @@ function Hero() {
 
 type VantaEffect = { destroy: () => void };
 
-function colorTokenToNumber(token: string) {
-  const value = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
-  const canvas = document.createElement("canvas");
-  canvas.width = 1;
-  canvas.height = 1;
-  const context = canvas.getContext("2d");
-  if (!context) return 0;
-  context.fillStyle = value;
-  context.fillRect(0, 0, 1, 1);
-  const data = context.getImageData(0, 0, 1, 1).data;
-  const red = data[0] ?? 0;
-  const green = data[1] ?? 0;
-  const blue = data[2] ?? 0;
-  return (red << 16) | (green << 8) | blue;
-}
-
 function VantaNetwork() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { theme } = useContext(ThemeContext);
+  const themeConfig = THEME_CONFIG[theme];
 
   useEffect(() => {
     const element = containerRef.current;
@@ -555,7 +542,7 @@ function VantaNetwork() {
             minWidth: 200,
             scale: 1,
             scaleMobile: 1,
-            color: colorTokenToNumber("--vanta-color"),
+            color: themeConfig.vantaColor,
             backgroundAlpha: 0,
             points: window.innerWidth < 640 ? 7 : 10,
             maxDistance: window.innerWidth < 640 ? 16 : 20,
@@ -577,6 +564,7 @@ function VantaNetwork() {
     <div
       ref={containerRef}
       aria-hidden="true"
+      style={{ opacity: themeConfig.mode === "light" ? 0.8 : 0.45 }}
       className="vanta-network pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_right,transparent_8%,black_55%,black_100%)]"
     />
   );
