@@ -10,7 +10,6 @@ const dict = {
       projects: "Projects",
       stack: "Tech Stack",
       contact: "Contact",
-      cta: "Get in touch",
     },
     theme: {
       label: "Theme",
@@ -130,7 +129,6 @@ const dict = {
       projects: "Proyectos",
       stack: "Stack",
       contact: "Contacto",
-      cta: "Hablemos",
     },
     theme: {
       label: "Tema",
