@@ -100,22 +100,32 @@ function LangToggle() {
 }
 
 const THEME_OPTIONS = [
-  "aether",
-  "ayu-dark",
+  "dracula",
+  "tokyo-night",
+  "one-dark",
+  "nord",
+  "catppuccin-mocha",
   "ayu-mirage",
   "gruvbox-dark",
-  "gruvbox-dark-hard",
-  "gruvbox-dark-soft",
-  "one-dark",
   "ayu-light",
-  "gruvbox-light",
-  "gruvbox-light-hard",
-  "gruvbox-light-soft",
+  "solarized-light",
   "one-light",
 ] as const;
 type Theme = (typeof THEME_OPTIONS)[number];
 const DEFAULT_THEME: Theme = "ayu-mirage";
 const THEME_STORAGE_KEY = "portfolio-theme";
+const THEME_LABELS: Record<Theme, string> = {
+  dracula: "Dracula",
+  "tokyo-night": "Tokyo Night",
+  "one-dark": "One Dark",
+  nord: "Nord",
+  "catppuccin-mocha": "Catppuccin Mocha",
+  "ayu-mirage": "Ayu Mirage",
+  "gruvbox-dark": "Gruvbox Dark",
+  "ayu-light": "Ayu Light",
+  "solarized-light": "Solarized Light",
+  "one-light": "One Light",
+};
 
 const ThemeContext = createContext<{
   theme: Theme;
@@ -135,8 +145,8 @@ function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
-    if (stored === "green") setThemeState(DEFAULT_THEME);
-    else if (stored && THEME_OPTIONS.includes(stored as Theme)) setThemeState(stored as Theme);
+    if (stored && THEME_OPTIONS.includes(stored as Theme)) setThemeState(stored as Theme);
+    else if (stored) window.localStorage.setItem(THEME_STORAGE_KEY, DEFAULT_THEME);
   }, []);
 
   useEffect(() => {
@@ -245,17 +255,7 @@ function ThemePicker() {
               >
                 <span className="flex items-center gap-2">
                   <span className={`theme-swatch theme-swatch-${option}`} aria-hidden="true" />
-                  <span>
-                    {option === "ayu-dark"
-                      ? "Ayu Dark"
-                      : option === "ayu-mirage"
-                        ? "Ayu Mirage"
-                        : option === "ayu-light"
-                          ? "Ayu Light"
-                          : option
-                              .replaceAll("-", " ")
-                              .replace(/\b\w/g, (letter) => letter.toUpperCase())}
-                  </span>
+                  <span>{THEME_LABELS[option]}</span>
                 </span>
                 {theme === option && <Check size={15} aria-hidden="true" />}
               </button>
@@ -441,7 +441,7 @@ function VantaNetwork() {
             minWidth: 200,
             scale: 1,
             scaleMobile: 1,
-            color: colorTokenToNumber("--primary"),
+            color: colorTokenToNumber("--vanta-color"),
             backgroundAlpha: 0,
             points: window.innerWidth < 640 ? 7 : 10,
             maxDistance: window.innerWidth < 640 ? 16 : 20,

@@ -17,7 +17,7 @@ const dict = {
       close: "Close theme selector",
       search: "Select Theme...",
       noResults: "No themes found",
-      documentation: "Zed-inspired theme catalog",
+      documentation: "Recognizable editor theme catalog",
     },
     hero: {
       pill: "Available for backend & AI automation work",
@@ -136,7 +136,7 @@ const dict = {
       close: "Cerrar selector de tema",
       search: "Seleccionar tema...",
       noResults: "No se encontraron temas",
-      documentation: "Catálogo de temas inspirado en Zed",
+      documentation: "Catálogo de temas de editores reconocibles",
     },
     hero: {
       pill: "Disponible para proyectos de backend y automatización con IA",
