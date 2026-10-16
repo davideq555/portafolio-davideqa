@@ -21,6 +21,10 @@ import {
   Palette,
   Check,
   Search,
+  ExternalLink,
+  Images,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { LangProvider, useLang } from "@/lib/i18n";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -798,12 +802,185 @@ function WhatIBuild() {
 
 type ProjectView = "projects" | "experiments";
 
+type ProjectLinks = {
+  repo?: string;
+  live?: string;
+  gallery?: readonly string[];
+};
+
 const viewFromHash = (): ProjectView =>
   window.location.hash === "#experiments" ? "experiments" : "projects";
+
+function ProjectActions({
+  links,
+  onGallery,
+  labels,
+}: {
+  links?: ProjectLinks;
+  onGallery?: () => void;
+  labels: {
+    repository: string;
+    live: string;
+    gallery: string;
+  };
+}) {
+  if (!links) return null;
+  return (
+    <div className="mt-5 flex flex-wrap gap-2 border-t border-border/70 pt-4">
+      {links.repo && (
+        <a
+          href={links.repo}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={labels.repository}
+          title={labels.repository}
+          className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 font-mono text-xs text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+        >
+          <Github size={14} aria-hidden="true" />
+          <span>{labels.repository}</span>
+        </a>
+      )}
+      {links.live && (
+        <a
+          href={links.live}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={labels.live}
+          title={labels.live}
+          className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 font-mono text-xs text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+        >
+          <ExternalLink size={14} aria-hidden="true" />
+          <span>{labels.live}</span>
+        </a>
+      )}
+      {links.gallery && links.gallery.length > 0 && onGallery && (
+        <button
+          type="button"
+          onClick={onGallery}
+          aria-label={labels.gallery}
+          title={labels.gallery}
+          className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 font-mono text-xs text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+        >
+          <Images size={14} aria-hidden="true" />
+          <span>{labels.gallery}</span>
+        </button>
+      )}
+    </div>
+  );
+}
+
+function GalleryModal({
+  title,
+  images,
+  imageIndex,
+  labels,
+  onClose,
+  onPrevious,
+  onNext,
+}: {
+  title: string;
+  images: readonly string[];
+  imageIndex: number;
+  labels: {
+    closeGallery: string;
+    previousImage: string;
+    nextImage: string;
+    imageCounter: string;
+  };
+  onClose: () => void;
+  onPrevious: () => void;
+  onNext: () => void;
+}) {
+  const closeRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeRef.current?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+      if (event.key === "ArrowLeft") onPrevious();
+      if (event.key === "ArrowRight") onNext();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [onClose, onNext, onPrevious]);
+
+  const counter = labels.imageCounter
+    .replace("{current}", String(imageIndex + 1))
+    .replace("{total}", String(images.length));
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-background/90 p-4 backdrop-blur-sm sm:p-8"
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div className="relative flex max-h-full w-full max-w-5xl flex-col items-center gap-4">
+        <div className="flex w-full items-center justify-between gap-4 text-sm text-muted-foreground">
+          <span className="min-w-0 truncate font-display text-foreground">{title}</span>
+          <span className="shrink-0 font-mono text-xs">{counter}</span>
+        </div>
+        <div className="relative flex min-h-0 w-full items-center justify-center">
+          <img
+            src={images[imageIndex]}
+            alt={`${title} - ${counter}`}
+            className="max-h-[calc(100vh-10rem)] w-auto max-w-full rounded-lg border border-border object-contain"
+          />
+          {images.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={onPrevious}
+                aria-label={labels.previousImage}
+                title={labels.previousImage}
+                className="absolute left-2 rounded-full border border-border bg-background/85 p-2 text-foreground transition-colors hover:border-primary hover:text-primary sm:left-4"
+              >
+                <ChevronLeft size={20} aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={onNext}
+                aria-label={labels.nextImage}
+                title={labels.nextImage}
+                className="absolute right-2 rounded-full border border-border bg-background/85 p-2 text-foreground transition-colors hover:border-primary hover:text-primary sm:right-4"
+              >
+                <ChevronRight size={20} aria-hidden="true" />
+              </button>
+            </>
+          )}
+        </div>
+        <button
+          ref={closeRef}
+          type="button"
+          onClick={onClose}
+          aria-label={labels.closeGallery}
+          title={labels.closeGallery}
+          className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 text-sm text-foreground transition-colors hover:border-primary hover:text-primary"
+        >
+          <X size={16} aria-hidden="true" />
+          <span>{labels.closeGallery}</span>
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function ProjectsAndExperiments() {
   const { t } = useLang();
   const [view, setView] = useState<ProjectView>("projects");
+  const [gallery, setGallery] = useState<{
+    title: string;
+    images: readonly string[];
+    imageIndex: number;
+  } | null>(null);
 
   useEffect(() => {
     const syncHash = () => setView(viewFromHash());
@@ -822,6 +999,24 @@ function ProjectsAndExperiments() {
     if (window.location.hash !== `#${next}`) {
       window.history.pushState(null, "", `#${next}`);
     }
+  };
+
+  const closeGallery = () => setGallery(null);
+  const previousImage = () =>
+    setGallery((current) =>
+      current
+        ? {
+            ...current,
+            imageIndex: (current.imageIndex - 1 + current.images.length) % current.images.length,
+          }
+        : null,
+    );
+  const nextImage = () =>
+    setGallery((current) =>
+      current ? { ...current, imageIndex: (current.imageIndex + 1) % current.images.length } : null,
+    );
+  const openGallery = (title: string, links?: ProjectLinks) => {
+    if (links?.gallery) setGallery({ title, images: links.gallery, imageIndex: 0 });
   };
 
   return (
@@ -872,6 +1067,11 @@ function ProjectsAndExperiments() {
                         </span>
                       ))}
                     </div>
+                    <ProjectActions
+                      links={p.links}
+                      labels={t.projects.actions}
+                      onGallery={() => openGallery(p.title, p.links)}
+                    />
                   </div>
                 </Reveal>
               ))}
@@ -884,7 +1084,7 @@ function ProjectsAndExperiments() {
                 const Icon = EXPERIMENT_ICONS[i]!;
                 return (
                   <Reveal key={e.title} delay={i * 100}>
-                    <div className="card-hover h-full rounded-xl border border-border bg-card/40 p-6">
+                    <div className="card-hover flex h-full flex-col rounded-xl border border-border bg-card/40 p-6">
                       <Icon size={22} className="text-primary" />
                       <h3 className="mt-4 font-display text-base font-semibold text-foreground">
                         {e.title}
@@ -892,6 +1092,11 @@ function ProjectsAndExperiments() {
                       <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">
                         {e.desc}
                       </p>
+                      <ProjectActions
+                        links={e.links}
+                        labels={t.projects.actions}
+                        onGallery={() => openGallery(e.title, e.links)}
+                      />
                     </div>
                   </Reveal>
                 );
@@ -900,6 +1105,17 @@ function ProjectsAndExperiments() {
           </TabsContent>
         </Tabs>
       </div>
+      {gallery && (
+        <GalleryModal
+          title={gallery.title}
+          images={gallery.images}
+          imageIndex={gallery.imageIndex}
+          labels={t.projects.actions}
+          onClose={closeGallery}
+          onPrevious={previousImage}
+          onNext={nextImage}
+        />
+      )}
     </section>
   );
 }

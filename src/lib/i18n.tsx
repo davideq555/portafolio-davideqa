@@ -65,30 +65,62 @@ const dict = {
         "Backend systems, AI automation and technical exploration — from shipped solutions to new ideas.",
       title: "Featured Projects",
       desc: "Systems, not just interfaces — backend, AI automation and complete end-to-end solutions.",
+      actions: {
+        repository: "Repository",
+        live: "Live page",
+        gallery: "View gallery",
+        closeGallery: "Close gallery",
+        previousImage: "Previous image",
+        nextImage: "Next image",
+        imageCounter: "Image {current} of {total}",
+      },
       items: [
         {
           tag: "Backend",
           title: "Multi-tenant API Platform",
           desc: "A production backend with FastAPI and PostgreSQL serving multi-tenant APIs, auth, role-based access and async task workers. Designed for scale and clean data isolation.",
           stack: ["Python", "FastAPI", "PostgreSQL", "Redis"],
+          links: {
+            repo: "https://github.com/davidaramayo/example-multitenant-api",
+            live: "https://example.com/multitenant-api",
+            gallery: [
+              "https://placehold.co/1200x800/png?text=API+Architecture",
+              "https://placehold.co/1200x800/png?text=Tenant+Dashboard",
+            ],
+          },
         },
         {
           tag: "AI Automation",
           title: "Intelligent Document Assistant",
           desc: "RAG system over enterprise documentation with LLM-powered Q&A, citations and automatic ingestion pipelines. Connects internal knowledge to a conversational interface.",
           stack: ["LangChain", "RAG", "LLMs", "Python"],
+          links: {
+            repo: "https://github.com/davidaramayo/example-document-assistant",
+            gallery: ["https://placehold.co/1200x800/png?text=RAG+Document+Flow"],
+          },
         },
         {
           tag: "AI Agents",
           title: "Autonomous Workflow Agents",
           desc: "AI Agents that orchestrate APIs, databases and external services to automate multi-step business processes end-to-end with tool use and memory.",
           stack: ["AI Agents", "Tools", "OpenAI"],
+          links: {
+            live: "https://example.com/autonomous-agents",
+            gallery: [
+              "https://placehold.co/1200x800/png?text=Agent+Workflow",
+              "https://placehold.co/1200x800/png?text=Tool+Execution",
+            ],
+          },
         },
         {
           tag: "Integration",
           title: "Enterprise API Connector",
           desc: "Bi-directional integration layer between internal systems and external services, with queueing, retries and observability for reliable data flow.",
           stack: ["Python", "APIs", "SQL Server"],
+          links: {
+            repo: "https://github.com/davidaramayo/example-api-connector",
+            live: "https://example.com/api-connector",
+          },
         },
       ],
     },
@@ -99,14 +131,29 @@ const dict = {
         {
           title: "Driver Drowsiness Detection (IoT)",
           desc: "Computer vision system on edge hardware that detects driver fatigue in real time and triggers alerts. Combines CV models with sensor integration.",
+          links: {
+            repo: "https://github.com/davidaramayo/example-drowsiness-iot",
+            gallery: [
+              "https://placehold.co/1200x800/png?text=IoT+Prototype",
+              "https://placehold.co/1200x800/png?text=Driver+Detection",
+            ],
+          },
         },
         {
           title: "RAG for Enterprise Docs",
           desc: "Experiment building retrieval-augmented generation over large internal documentation sets, testing chunking strategies and vector stores.",
+          links: {
+            live: "https://example.com/enterprise-rag-lab",
+            gallery: ["https://placehold.co/1200x800/png?text=Enterprise+RAG+Lab"],
+          },
         },
         {
           title: "Computer Vision & AI Labs",
           desc: "Hands-on experiments with CV models, LLMs and new automation tooling — exploring what's practical before bringing it into production systems.",
+          links: {
+            repo: "https://github.com/davidaramayo/example-ai-labs",
+            live: "https://example.com/ai-labs",
+          },
         },
       ],
     },
@@ -185,30 +232,62 @@ const dict = {
         "Sistemas backend, automatización con IA y exploración técnica: de soluciones entregadas a nuevas ideas.",
       title: "Proyectos destacados",
       desc: "Sistemas, no solo interfaces — backend, automatización con IA y soluciones completas de punta a punta.",
+      actions: {
+        repository: "Repositorio",
+        live: "Página en vivo",
+        gallery: "Ver galería",
+        closeGallery: "Cerrar galería",
+        previousImage: "Imagen anterior",
+        nextImage: "Imagen siguiente",
+        imageCounter: "Imagen {current} de {total}",
+      },
       items: [
         {
           tag: "Backend",
           title: "Plataforma API Multi-tenant",
           desc: "Backend en producción con FastAPI y PostgreSQL sirviendo APIs multi-tenant, autenticación, control de acceso por roles y workers asíncronos. Diseñado para escalar con aislamiento de datos limpio.",
           stack: ["Python", "FastAPI", "PostgreSQL", "Redis"],
+          links: {
+            repo: "https://github.com/davidaramayo/example-multitenant-api",
+            live: "https://example.com/multitenant-api",
+            gallery: [
+              "https://placehold.co/1200x800/png?text=API+Architecture",
+              "https://placehold.co/1200x800/png?text=Tenant+Dashboard",
+            ],
+          },
         },
         {
           tag: "Automatización IA",
           title: "Asistente Inteligente de Documentos",
           desc: "Sistema RAG sobre documentación empresarial con preguntas y respuestas potenciadas por LLM, citas y pipelines de ingesta automática. Conecta el conocimiento interno con una interfaz conversacional.",
           stack: ["LangChain", "RAG", "LLMs", "Python"],
+          links: {
+            repo: "https://github.com/davidaramayo/example-document-assistant",
+            gallery: ["https://placehold.co/1200x800/png?text=RAG+Document+Flow"],
+          },
         },
         {
           tag: "AI Agents",
           title: "Agentes Autónomos de Workflows",
           desc: "AI Agents que orquestan APIs, bases de datos y servicios externos para automatizar procesos de negocio de múltiples pasos de punta a punta, con uso de herramientas y memoria.",
           stack: ["AI Agents", "Tools", "OpenAI"],
+          links: {
+            live: "https://example.com/autonomous-agents",
+            gallery: [
+              "https://placehold.co/1200x800/png?text=Agent+Workflow",
+              "https://placehold.co/1200x800/png?text=Tool+Execution",
+            ],
+          },
         },
         {
           tag: "Integración",
           title: "Conector de APIs Empresariales",
           desc: "Capa de integración bidireccional entre sistemas internos y servicios externos, con colas, reintentos y observabilidad para un flujo de datos confiable.",
           stack: ["Python", "APIs", "SQL Server"],
+          links: {
+            repo: "https://github.com/davidaramayo/example-api-connector",
+            live: "https://example.com/api-connector",
+          },
         },
       ],
     },
@@ -219,14 +298,29 @@ const dict = {
         {
           title: "Detección de Somnolencia en Conductores (IoT)",
           desc: "Sistema de visión por computadora en hardware edge que detecta fatiga del conductor en tiempo real y dispara alertas. Combina modelos de CV con integración de sensores.",
+          links: {
+            repo: "https://github.com/davidaramayo/example-drowsiness-iot",
+            gallery: [
+              "https://placehold.co/1200x800/png?text=IoT+Prototype",
+              "https://placehold.co/1200x800/png?text=Driver+Detection",
+            ],
+          },
         },
         {
           title: "RAG para Documentación Empresarial",
           desc: "Experimento de generación aumentada por recuperación sobre grandes conjuntos de documentación interna, probando estrategias de chunking y vector stores.",
+          links: {
+            live: "https://example.com/enterprise-rag-lab",
+            gallery: ["https://placehold.co/1200x800/png?text=Enterprise+RAG+Lab"],
+          },
         },
         {
           title: "Laboratorios de Computer Vision e IA",
           desc: "Experimentos prácticos con modelos de CV, LLMs y nuevas herramientas de automatización — explorando qué es práctico antes de llevarlo a sistemas en producción.",
+          links: {
+            repo: "https://github.com/davidaramayo/example-ai-labs",
+            live: "https://example.com/ai-labs",
+          },
         },
       ],
     },
