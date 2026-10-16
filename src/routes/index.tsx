@@ -467,10 +467,10 @@ function Hero() {
   const { t } = useLang();
   return (
     <section id="top" className="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28">
-      <VantaNetwork />
       <div className="bg-grid pointer-events-none absolute inset-0 opacity-30" />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
-      <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
+      <VantaNetwork />
+      <div className="relative z-10 mx-auto max-w-6xl px-5 sm:px-8">
         <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs text-muted-foreground">
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
@@ -577,7 +577,7 @@ function VantaNetwork() {
     <div
       ref={containerRef}
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 opacity-35 [mask-image:linear-gradient(to_right,transparent_8%,black_55%,black_100%)] sm:opacity-50"
+      className="vanta-network pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_right,transparent_8%,black_55%,black_100%)]"
     />
   );
 }

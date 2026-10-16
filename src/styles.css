@@ -76,7 +76,8 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
   --primary: oklch(0.208 0.042 265.755);
-  --vanta-color: oklch(0.25 0.035 265);
+  --vanta-color: #243b53;
+  --vanta-opacity: 0.8;
   --primary-foreground: oklch(0.984 0.003 247.858);
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
@@ -112,7 +113,8 @@
   --popover: oklch(0.21 0.02 260);
   --popover-foreground: oklch(0.97 0.004 247);
   --primary: oklch(0.85 0.21 145);
-  --vanta-color: oklch(0.92 0.18 145);
+  --vanta-color: #8ff0c2;
+  --vanta-opacity: 0.45;
   --primary-foreground: oklch(0.16 0.018 260);
   --secondary: oklch(0.26 0.03 258);
   --secondary-foreground: oklch(0.97 0.004 247);
@@ -163,7 +165,8 @@ html.dark[data-theme="dracula"] {
   --primary-foreground: oklch(0.18 0.035 285);
   --accent: oklch(0.35 0.1 300);
   --ring: oklch(0.78 0.18 330);
-  --vanta-color: oklch(0.88 0.16 190);
+  --vanta-color: #67e8f9;
+  --vanta-opacity: 0.45;
 }
 html.dark[data-theme="tokyo-night"] {
   --background: oklch(0.17 0.035 260);
@@ -173,7 +176,8 @@ html.dark[data-theme="tokyo-night"] {
   --primary-foreground: oklch(0.17 0.035 260);
   --accent: oklch(0.33 0.09 250);
   --ring: oklch(0.76 0.16 220);
-  --vanta-color: oklch(0.88 0.14 190);
+  --vanta-color: #5eead4;
+  --vanta-opacity: 0.45;
 }
 html.dark[data-theme="one-dark"] {
   --background: oklch(0.22 0.025 255);
@@ -183,7 +187,8 @@ html.dark[data-theme="one-dark"] {
   --primary-foreground: oklch(0.22 0.025 255);
   --accent: oklch(0.39 0.07 220);
   --ring: oklch(0.78 0.16 205);
-  --vanta-color: oklch(0.88 0.14 190);
+  --vanta-color: #7dd3fc;
+  --vanta-opacity: 0.45;
 }
 html.dark[data-theme="nord"] {
   --background: oklch(0.22 0.025 250);
@@ -193,7 +198,8 @@ html.dark[data-theme="nord"] {
   --primary-foreground: oklch(0.22 0.025 250);
   --accent: oklch(0.36 0.06 220);
   --ring: oklch(0.76 0.12 215);
-  --vanta-color: oklch(0.9 0.11 190);
+  --vanta-color: #93c5fd;
+  --vanta-opacity: 0.45;
 }
 html.dark[data-theme="catppuccin-mocha"] {
   --background: oklch(0.17 0.03 285);
@@ -203,7 +209,8 @@ html.dark[data-theme="catppuccin-mocha"] {
   --primary-foreground: oklch(0.17 0.03 285);
   --accent: oklch(0.35 0.08 290);
   --ring: oklch(0.8 0.14 300);
-  --vanta-color: oklch(0.9 0.13 190);
+  --vanta-color: #c4b5fd;
+  --vanta-opacity: 0.45;
 }
 html.dark[data-theme="ayu-mirage"] {
   --background: oklch(0.19 0.035 250);
@@ -217,7 +224,8 @@ html.dark[data-theme="ayu-mirage"] {
   --accent: oklch(0.35 0.08 78);
   --accent-foreground: oklch(0.86 0.14 78);
   --ring: oklch(0.82 0.15 78);
-  --vanta-color: oklch(0.9 0.14 190);
+  --vanta-color: #fcd34d;
+  --vanta-opacity: 0.45;
 }
 html.dark[data-theme="gruvbox-dark"] {
   --background: oklch(0.19 0.035 90);
@@ -231,7 +239,8 @@ html.dark[data-theme="gruvbox-dark"] {
   --accent: oklch(0.36 0.08 65);
   --accent-foreground: oklch(0.84 0.15 82);
   --ring: oklch(0.78 0.16 82);
-  --vanta-color: oklch(0.88 0.14 190);
+  --vanta-color: #facc15;
+  --vanta-opacity: 0.45;
 }
 
 html.dark[data-theme="ayu-light"],
@@ -250,14 +259,16 @@ html.dark[data-theme="one-light"] {
   --accent: oklch(0.88 0.05 85);
   --border: oklch(0.75 0.04 85);
   --input: oklch(0.78 0.04 85);
-  --vanta-color: oklch(0.25 0.035 80);
+  --vanta-color: #263238;
+  --vanta-opacity: 0.8;
 }
 html.dark[data-theme="ayu-light"] {
   --primary: oklch(0.55 0.16 78);
   --primary-foreground: oklch(0.98 0.01 90);
   --accent-foreground: oklch(0.48 0.14 78);
   --ring: oklch(0.55 0.16 78);
-  --vanta-color: oklch(0.22 0.04 75);
+  --vanta-color: #263238;
+  --vanta-opacity: 0.8;
 }
 html.dark[data-theme="solarized-light"] {
   --background: oklch(0.95 0.025 90);
@@ -272,7 +283,8 @@ html.dark[data-theme="solarized-light"] {
   --muted: oklch(0.9 0.03 90);
   --accent: oklch(0.85 0.06 90);
   --ring: oklch(0.47 0.14 220);
-  --vanta-color: oklch(0.25 0.08 220);
+  --vanta-color: #174a5b;
+  --vanta-opacity: 0.8;
 }
 html.dark[data-theme="one-light"] {
   --background: oklch(0.97 0.008 250);
@@ -291,7 +303,13 @@ html.dark[data-theme="one-light"] {
   --border: oklch(0.78 0.02 250);
   --input: oklch(0.8 0.02 250);
   --ring: oklch(0.52 0.16 250);
-  --vanta-color: oklch(0.25 0.08 250);
+  --vanta-color: #1f3a5f;
+  --vanta-opacity: 0.8;
+}
+
+.vanta-network {
+  opacity: var(--vanta-opacity);
+  z-index: 1;
 }
 
 @layer base {
