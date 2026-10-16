@@ -20,7 +20,7 @@ import {
   Languages,
   Palette,
   Check,
-  RotateCcw,
+  Search,
 } from "lucide-react";
 import { LangProvider, useLang } from "@/lib/i18n";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -99,9 +99,22 @@ function LangToggle() {
   );
 }
 
-type Theme = "green" | "amber" | "violet" | "cyan" | "rose";
-
-const THEME_OPTIONS: Theme[] = ["green", "amber", "violet", "cyan", "rose"];
+const THEME_OPTIONS = [
+  "aether",
+  "ayu-dark",
+  "ayu-mirage",
+  "gruvbox-dark",
+  "gruvbox-dark-hard",
+  "gruvbox-dark-soft",
+  "one-dark",
+  "ayu-light",
+  "gruvbox-light",
+  "gruvbox-light-hard",
+  "gruvbox-light-soft",
+  "one-light",
+] as const;
+type Theme = (typeof THEME_OPTIONS)[number];
+const DEFAULT_THEME: Theme = "ayu-mirage";
 const THEME_STORAGE_KEY = "portfolio-theme";
 
 const ThemeContext = createContext<{
@@ -110,24 +123,24 @@ const ThemeContext = createContext<{
   open: boolean;
   setOpen: (open: boolean) => void;
 }>({
-  theme: "green",
+  theme: DEFAULT_THEME,
   setTheme: () => {},
   open: false,
   setOpen: () => {},
 });
 
 function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("green");
+  const [theme, setThemeState] = useState<Theme>(DEFAULT_THEME);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
-    if (stored && THEME_OPTIONS.includes(stored as Theme)) setThemeState(stored as Theme);
+    if (stored === "green") setThemeState(DEFAULT_THEME);
+    else if (stored && THEME_OPTIONS.includes(stored as Theme)) setThemeState(stored as Theme);
   }, []);
 
   useEffect(() => {
-    if (theme === "green") delete document.documentElement.dataset["theme"];
-    else document.documentElement.dataset["theme"] = theme;
+    document.documentElement.dataset["theme"] = theme;
   }, [theme]);
 
   const setTheme = (next: Theme) => {
@@ -138,8 +151,8 @@ function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
-      if (target?.matches("input, textarea, select, [contenteditable='true']")) return;
       if (event.key.toLowerCase() === "t") {
+        if (target?.matches("input, textarea, select, [contenteditable='true']")) return;
         event.preventDefault();
         setOpen((value) => !value);
       }
@@ -160,10 +173,14 @@ function ThemePicker() {
   const { theme, setTheme, open, setOpen } = useContext(ThemeContext);
   const { t } = useLang();
   const pickerRef = useRef<HTMLDivElement>(null);
-  const firstOptionRef = useRef<HTMLButtonElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
-    if (open) firstOptionRef.current?.focus();
+    if (open) {
+      setQuery("");
+      searchRef.current?.focus();
+    }
   }, [open]);
 
   useEffect(() => {
@@ -174,13 +191,9 @@ function ThemePicker() {
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [open, setOpen]);
 
-  const names = {
-    green: t.theme.default,
-    amber: t.theme.names.amber,
-    violet: t.theme.names.violet,
-    cyan: t.theme.names.cyan,
-    rose: t.theme.names.rose,
-  } satisfies Record<Theme, string>;
+  const filteredThemes = THEME_OPTIONS.filter((option) =>
+    option.toLowerCase().includes(query.trim().toLowerCase()),
+  );
 
   return (
     <div ref={pickerRef} className="relative">
@@ -202,43 +215,58 @@ function ThemePicker() {
         <div
           role="dialog"
           aria-label={t.theme.open}
-          className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-52 rounded-lg border border-border bg-popover p-2 shadow-xl shadow-black/20"
+          className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-[min(19rem,calc(100vw-2rem))] rounded-md border border-border bg-popover p-2 font-mono shadow-xl shadow-black/20"
         >
-          <p className="px-2 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
-            {t.theme.label}
-          </p>
-          <div className="space-y-1">
-            {THEME_OPTIONS.map((option, index) => (
+          <label className="flex items-center gap-2 rounded border border-input bg-background/70 px-2.5 py-2 text-xs text-muted-foreground focus-within:border-primary">
+            <Search size={14} aria-hidden="true" />
+            <span className="sr-only">{t.theme.search}</span>
+            <input
+              ref={searchRef}
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={t.theme.search}
+              className="min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted-foreground"
+            />
+          </label>
+          <div className="mt-2 max-h-64 space-y-0.5 overflow-y-auto pr-0.5" role="listbox">
+            {filteredThemes.map((option) => (
               <button
                 key={option}
-                ref={index === 0 ? firstOptionRef : undefined}
                 type="button"
+                role="option"
+                aria-selected={theme === option}
                 aria-pressed={theme === option}
                 onClick={() => {
                   setTheme(option);
                   setOpen(false);
                 }}
-                className="flex w-full items-center justify-between rounded-md px-2 py-2 text-left text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground aria-pressed:bg-primary/10 aria-pressed:text-primary"
+                className="flex w-full items-center justify-between rounded px-2 py-2 text-left text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground aria-pressed:bg-primary/10 aria-pressed:text-primary"
               >
                 <span className="flex items-center gap-2">
                   <span className={`theme-swatch theme-swatch-${option}`} aria-hidden="true" />
-                  {names[option]}
+                  <span>
+                    {option === "ayu-dark"
+                      ? "Ayu Dark"
+                      : option === "ayu-mirage"
+                        ? "Ayu Mirage"
+                        : option === "ayu-light"
+                          ? "Ayu Light"
+                          : option
+                              .replaceAll("-", " ")
+                              .replace(/\b\w/g, (letter) => letter.toUpperCase())}
+                  </span>
                 </span>
                 {theme === option && <Check size={15} aria-hidden="true" />}
               </button>
             ))}
+            {!filteredThemes.length && (
+              <p className="px-2 py-3 text-xs text-muted-foreground">{t.theme.noResults}</p>
+            )}
           </div>
-          <button
-            type="button"
-            onClick={() => {
-              setTheme("green");
-              setOpen(false);
-            }}
-            className="mt-2 flex w-full items-center gap-2 border-t border-border px-2 pt-2 text-left text-xs text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <RotateCcw size={13} aria-hidden="true" />
-            {t.theme.reset}
-          </button>
+          <p className="mt-2 border-t border-border px-2 pt-2 text-[10px] text-muted-foreground">
+            {t.theme.documentation}
+          </p>
         </div>
       )}
     </div>
