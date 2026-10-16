@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import {
   Server,
   Cpu,
@@ -18,8 +18,12 @@ import {
   Menu,
   X,
   Languages,
+  Palette,
+  Check,
+  Search,
 } from "lucide-react";
 import { LangProvider, useLang } from "@/lib/i18n";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -66,7 +70,7 @@ function Reveal({
           }
         });
       },
-      { threshold: 0.12 }
+      { threshold: 0.12 },
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -95,6 +99,296 @@ function LangToggle() {
   );
 }
 
+const THEME_OPTIONS = [
+  "dracula",
+  "tokyo-night",
+  "one-dark",
+  "nord",
+  "catppuccin-mocha",
+  "ayu-mirage",
+  "gruvbox-dark",
+  "ayu-light",
+  "solarized-light",
+  "one-light",
+] as const;
+type Theme = (typeof THEME_OPTIONS)[number];
+const DEFAULT_THEME: Theme = "ayu-mirage";
+const THEME_STORAGE_KEY = "portfolio-theme";
+type ThemeMode = "dark" | "light";
+type ThemeMetadata = { label: string; mode: ThemeMode; vantaColor: number };
+const THEME_CONFIG = {
+  dracula: { label: "Dracula", mode: "dark", vantaColor: 0x67e8f9 },
+  "tokyo-night": { label: "Tokyo Night", mode: "dark", vantaColor: 0x5eead4 },
+  "one-dark": { label: "One Dark", mode: "dark", vantaColor: 0x7dd3fc },
+  nord: { label: "Nord", mode: "dark", vantaColor: 0x93c5fd },
+  "catppuccin-mocha": { label: "Catppuccin Mocha", mode: "dark", vantaColor: 0xc4b5fd },
+  "ayu-mirage": { label: "Ayu Mirage", mode: "dark", vantaColor: 0xfcd34d },
+  "gruvbox-dark": { label: "Gruvbox Dark", mode: "dark", vantaColor: 0xfacc15 },
+  "ayu-light": { label: "Ayu Light", mode: "light", vantaColor: 0x263238 },
+  "solarized-light": { label: "Solarized Light", mode: "light", vantaColor: 0x174a5b },
+  "one-light": { label: "One Light", mode: "light", vantaColor: 0x1f3a5f },
+} satisfies Record<Theme, ThemeMetadata>;
+
+const ThemeContext = createContext<{
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}>({
+  theme: DEFAULT_THEME,
+  setTheme: () => {},
+  open: false,
+  setOpen: () => {},
+});
+
+function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [theme, setThemeState] = useState<Theme>(DEFAULT_THEME);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+    if (stored && THEME_OPTIONS.includes(stored as Theme)) setThemeState(stored as Theme);
+    else if (stored) window.localStorage.setItem(THEME_STORAGE_KEY, DEFAULT_THEME);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset["theme"] = theme;
+  }, [theme]);
+
+  const setTheme = (next: Theme) => {
+    setThemeState(next);
+    window.localStorage.setItem(THEME_STORAGE_KEY, next);
+  };
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (event.key.toLowerCase() === "t") {
+        if (target?.matches("input, textarea, select, [contenteditable='true']")) return;
+        event.preventDefault();
+        setOpen((value) => !value);
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, []);
+
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme, open, setOpen }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+
+function ThemePicker() {
+  const { theme, setTheme, open, setOpen } = useContext(ThemeContext);
+  const { t } = useLang();
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
+  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const [query, setQuery] = useState("");
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+
+  useEffect(() => {
+    if (open) {
+      setQuery("");
+      const selectedIndex = THEME_OPTIONS.indexOf(theme);
+      setHighlightedIndex(selectedIndex >= 0 ? selectedIndex : 0);
+      searchRef.current?.focus();
+    }
+  }, [open, theme]);
+
+  useEffect(() => {
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open]);
+
+  const filteredThemes = THEME_OPTIONS.filter((option) =>
+    option.toLowerCase().includes(query.trim().toLowerCase()),
+  );
+  const closePicker = () => {
+    setOpen(false);
+    triggerRef.current?.focus();
+  };
+  const moveHighlight = (nextIndex: number) => {
+    if (!filteredThemes.length) return;
+    const wrappedIndex = (nextIndex + filteredThemes.length) % filteredThemes.length;
+    setHighlightedIndex(wrappedIndex);
+    optionRefs.current[wrappedIndex]?.focus();
+  };
+  const selectTheme = (option: Theme) => {
+    setTheme(option);
+    closePicker();
+  };
+
+  return (
+    <div>
+      <button
+        ref={triggerRef}
+        type="button"
+        aria-label={open ? t.theme.close : t.theme.open}
+        aria-expanded={open}
+        aria-haspopup="dialog"
+        onClick={() => setOpen(!open)}
+        className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 font-mono text-xs text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+      >
+        <Palette size={14} aria-hidden="true" />
+        <span>{t.theme.label}</span>
+        <kbd className="hidden rounded border border-border px-1 text-[10px] text-muted-foreground sm:inline">
+          T
+        </kbd>
+      </button>
+      {open && (
+        <div
+          className="theme-picker-overlay fixed inset-0 z-[60] flex items-center justify-center bg-black/55 p-4 backdrop-blur-[2px] sm:p-6"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) closePicker();
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
+              event.preventDefault();
+              closePicker();
+            }
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="theme-picker-title"
+            className="theme-picker-panel flex max-h-[min(42rem,calc(100dvh-2rem))] w-full max-w-lg flex-col rounded-xl border border-border bg-popover p-4 font-mono shadow-2xl shadow-black/30 sm:p-5"
+            onMouseDown={(event) => event.stopPropagation()}
+            onKeyDown={(event) => {
+              const target = event.target as HTMLElement;
+              const isTextField = target.matches(
+                "input, textarea, select, [contenteditable='true']",
+              );
+              if (
+                !isTextField &&
+                event.key.length === 1 &&
+                event.key !== " " &&
+                !event.ctrlKey &&
+                !event.metaKey &&
+                !event.altKey
+              ) {
+                event.preventDefault();
+                event.stopPropagation();
+                searchRef.current?.focus();
+                setQuery((value) => value + event.key);
+                setHighlightedIndex(0);
+              }
+            }}
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.18em] text-primary">
+                  {t.theme.label}
+                </p>
+                <h2
+                  id="theme-picker-title"
+                  className="mt-1 font-display text-lg font-semibold text-foreground"
+                >
+                  {t.theme.dialogTitle}
+                </h2>
+              </div>
+              <button
+                type="button"
+                aria-label={t.theme.close}
+                onClick={closePicker}
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-md border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+              >
+                <X size={18} aria-hidden="true" />
+              </button>
+            </div>
+            <label className="mt-4 flex min-h-11 items-center gap-2 rounded border border-input bg-background/70 px-3 py-2 text-xs text-muted-foreground focus-within:border-primary">
+              <Search size={14} aria-hidden="true" />
+              <span className="sr-only">{t.theme.search}</span>
+              <input
+                ref={searchRef}
+                type="search"
+                value={query}
+                onChange={(event) => {
+                  setQuery(event.target.value);
+                  setHighlightedIndex(0);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "ArrowDown") {
+                    event.preventDefault();
+                    moveHighlight(0);
+                  } else if (event.key === "ArrowUp") {
+                    event.preventDefault();
+                    moveHighlight(filteredThemes.length - 1);
+                  } else if (event.key === "Enter" && filteredThemes[highlightedIndex]) {
+                    event.preventDefault();
+                    selectTheme(filteredThemes[highlightedIndex]);
+                  }
+                }}
+                placeholder={t.theme.search}
+                className="min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted-foreground"
+              />
+            </label>
+            <div
+              className="mt-3 min-h-0 flex-1 space-y-1 overflow-y-auto pr-1"
+              role="listbox"
+              aria-label={t.theme.dialogTitle}
+            >
+              {filteredThemes.map((option, index) => (
+                <button
+                  key={option}
+                  ref={(element) => {
+                    optionRefs.current[index] = element;
+                  }}
+                  type="button"
+                  role="option"
+                  aria-selected={theme === option}
+                  aria-pressed={theme === option}
+                  data-highlighted={highlightedIndex === index ? "true" : undefined}
+                  onFocus={() => setHighlightedIndex(index)}
+                  onKeyDown={(event) => {
+                    if (event.key === "ArrowDown") {
+                      event.preventDefault();
+                      moveHighlight(index + 1);
+                    } else if (event.key === "ArrowUp") {
+                      event.preventDefault();
+                      moveHighlight(index - 1);
+                    } else if (event.key === "Home") {
+                      event.preventDefault();
+                      moveHighlight(0);
+                    } else if (event.key === "End") {
+                      event.preventDefault();
+                      moveHighlight(filteredThemes.length - 1);
+                    } else if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      selectTheme(option);
+                    }
+                  }}
+                  onClick={() => selectTheme(option)}
+                  className="flex min-h-11 w-full items-center justify-between rounded px-3 py-2 text-left text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground aria-pressed:bg-primary/10 aria-pressed:text-primary data-[highlighted=true]:bg-accent data-[highlighted=true]:text-foreground"
+                >
+                  <span className="flex items-center gap-2">
+                    <span className={`theme-swatch theme-swatch-${option}`} aria-hidden="true" />
+                    <span>{THEME_CONFIG[option].label}</span>
+                  </span>
+                  {theme === option && <Check size={15} aria-hidden="true" />}
+                </button>
+              ))}
+              {!filteredThemes.length && (
+                <p className="px-2 py-3 text-xs text-muted-foreground">{t.theme.noResults}</p>
+              )}
+            </div>
+            <p className="mt-3 border-t border-border px-2 pt-3 text-[10px] text-muted-foreground">
+              {t.theme.documentation}
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ---------------- Nav ---------------- */
 function Nav() {
   const [open, setOpen] = useState(false);
@@ -109,7 +403,6 @@ function Nav() {
     { href: "#about", label: t.nav.about },
     { href: "#work", label: t.nav.work },
     { href: "#projects", label: t.nav.projects },
-    { href: "#experiments", label: t.nav.experiments },
     { href: "#stack", label: t.nav.stack },
     { href: "#contact", label: t.nav.contact },
   ];
@@ -122,7 +415,10 @@ function Nav() {
       }`}
     >
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
-        <a href="#top" className="font-display text-base font-semibold tracking-tight text-foreground">
+        <a
+          href="#top"
+          className="font-display text-base font-semibold tracking-tight text-foreground"
+        >
           David<span className="text-primary">.</span>
         </a>
         <div className="hidden items-center gap-7 md:flex">
@@ -135,20 +431,14 @@ function Nav() {
               {l.label}
             </a>
           ))}
-          <LangToggle />
-          <a
-            href="#contact"
-            className="rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:text-primary"
-          >
-            {t.nav.cta}
-          </a>
         </div>
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-2">
+          <ThemePicker />
           <LangToggle />
           <button
+            className="grid h-10 w-10 place-items-center rounded-md border border-border text-foreground md:hidden"
             aria-label="Toggle menu"
             onClick={() => setOpen((v) => !v)}
-            className="grid h-10 w-10 place-items-center rounded-md border border-border text-foreground"
           >
             {open ? <X size={18} /> : <Menu size={18} />}
           </button>
@@ -167,13 +457,6 @@ function Nav() {
                 {l.label}
               </a>
             ))}
-            <a
-              href="#contact"
-              onClick={() => setOpen(false)}
-              className="mt-3 rounded-md bg-primary px-4 py-3 text-center text-sm font-medium text-primary-foreground"
-            >
-              {t.nav.cta}
-            </a>
           </div>
         </div>
       )}
@@ -186,10 +469,10 @@ function Hero() {
   const { t } = useLang();
   return (
     <section id="top" className="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28">
-      <VantaNetwork />
       <div className="bg-grid pointer-events-none absolute inset-0 opacity-30" />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
-      <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
+      <VantaNetwork />
+      <div className="relative z-10 mx-auto max-w-6xl px-5 sm:px-8">
         <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs text-muted-foreground">
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
@@ -227,24 +510,10 @@ function Hero() {
 
 type VantaEffect = { destroy: () => void };
 
-function colorTokenToNumber(token: string) {
-  const value = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
-  const canvas = document.createElement("canvas");
-  canvas.width = 1;
-  canvas.height = 1;
-  const context = canvas.getContext("2d");
-  if (!context) return 0;
-  context.fillStyle = value;
-  context.fillRect(0, 0, 1, 1);
-  const data = context.getImageData(0, 0, 1, 1).data;
-  const red = data[0] ?? 0;
-  const green = data[1] ?? 0;
-  const blue = data[2] ?? 0;
-  return (red << 16) | (green << 8) | blue;
-}
-
 function VantaNetwork() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { theme } = useContext(ThemeContext);
+  const themeConfig = THEME_CONFIG[theme];
 
   useEffect(() => {
     const element = containerRef.current;
@@ -253,58 +522,56 @@ function VantaNetwork() {
 
     let cancelled = false;
     let effect: VantaEffect | undefined;
+    let frameId: number | undefined;
 
     void Promise.all([import("three"), import("vanta/dist/vanta.net.min")]).then(
       ([threeModule, vantaModule]) => {
         if (cancelled || !containerRef.current) return;
-        const importedNetwork = vantaModule.default;
-        const createNetwork =
-          typeof importedNetwork === "function" ? importedNetwork : importedNetwork.default;
-        effect = createNetwork({
-          el: containerRef.current,
-          THREE: threeModule,
-          mouseControls: true,
-          touchControls: true,
-          gyroControls: false,
-          minHeight: 200,
-          minWidth: 200,
-          scale: 1,
-          scaleMobile: 1,
-          color: colorTokenToNumber("--primary"),
-          backgroundAlpha: 0,
-          points: window.innerWidth < 640 ? 7 : 10,
-          maxDistance: window.innerWidth < 640 ? 16 : 20,
-          spacing: window.innerWidth < 640 ? 20 : 18,
-          showDots: true,
-        }) as VantaEffect;
+        frameId = window.requestAnimationFrame(() => {
+          if (cancelled || !containerRef.current) return;
+          const importedNetwork = vantaModule.default;
+          const createNetwork =
+            typeof importedNetwork === "function" ? importedNetwork : importedNetwork.default;
+          effect = createNetwork({
+            el: containerRef.current,
+            THREE: threeModule,
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200,
+            minWidth: 200,
+            scale: 1,
+            scaleMobile: 1,
+            color: themeConfig.vantaColor,
+            backgroundAlpha: 0,
+            points: window.innerWidth < 640 ? 7 : 10,
+            maxDistance: window.innerWidth < 640 ? 16 : 20,
+            spacing: window.innerWidth < 640 ? 20 : 18,
+            showDots: true,
+          }) as VantaEffect;
+        });
       },
     );
 
     return () => {
       cancelled = true;
+      if (frameId !== undefined) window.cancelAnimationFrame(frameId);
       effect?.destroy();
     };
-  }, []);
+  }, [theme]);
 
   return (
     <div
       ref={containerRef}
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 opacity-35 [mask-image:linear-gradient(to_right,transparent_8%,black_55%,black_100%)] sm:opacity-50"
+      style={{ opacity: themeConfig.mode === "light" ? 0.8 : 0.45 }}
+      className="vanta-network pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_right,transparent_8%,black_55%,black_100%)]"
     />
   );
 }
 
 /* ---------------- Section heading ---------------- */
-function SectionTitle({
-  index,
-  title,
-  desc,
-}: {
-  index: string;
-  title: string;
-  desc?: string;
-}) {
+function SectionTitle({ index, title, desc }: { index: string; title: string; desc?: string }) {
   return (
     <Reveal>
       <div className="mb-12 sm:mb-16">
@@ -312,7 +579,9 @@ function SectionTitle({
         <h2 className="mt-3 font-display text-2xl font-semibold tracking-tight text-foreground sm:text-4xl">
           {title}
         </h2>
-        {desc && <p className="mt-4 max-w-2xl text-sm text-muted-foreground sm:text-base">{desc}</p>}
+        {desc && (
+          <p className="mt-4 max-w-2xl text-sm text-muted-foreground sm:text-base">{desc}</p>
+        )}
       </div>
     </Reveal>
   );
@@ -329,7 +598,13 @@ type Line =
   | { kind: "blank" };
 
 const TERMINAL_LINES: Line[] = [
-  { kind: "prompt", user: "david", host: "infra", path: "~/portfolio", cmd: "docker compose up -d" },
+  {
+    kind: "prompt",
+    user: "david",
+    host: "infra",
+    path: "~/portfolio",
+    cmd: "docker compose up -d",
+  },
   { kind: "status", head: "[+] Running 3/3" },
   { kind: "row", icon: "⠿", cat: "Network", name: "portfolio_default", state: "Created" },
   { kind: "row", icon: "⠿", cat: "Container", name: "portfolio_db_1", state: "Healthy" },
@@ -342,15 +617,16 @@ const TERMINAL_LINES: Line[] = [
 ];
 
 function TerminalLine({ line }: { line: Line }) {
-  if (line.kind === "os")
-    return <div className="text-muted-foreground/70">{line.text}</div>;
+  if (line.kind === "os") return <div className="text-muted-foreground/70">{line.text}</div>;
 
   if (line.kind === "blank") return <div className="h-3" />;
 
   if (line.kind === "prompt")
     return (
       <div className="flex flex-wrap items-center gap-x-1">
-        <span className="text-primary">{line.user}@{line.host}</span>
+        <span className="text-primary">
+          {line.user}@{line.host}
+        </span>
         <span className="text-muted-foreground">:</span>
         <span className="text-accent-foreground/80">{line.path}</span>
         <span className="text-primary">$</span>
@@ -358,8 +634,7 @@ function TerminalLine({ line }: { line: Line }) {
       </div>
     );
 
-  if (line.kind === "status")
-    return <div className="text-primary">{line.head}</div>;
+  if (line.kind === "status") return <div className="text-primary">{line.head}</div>;
 
   if (line.kind === "row")
     return (
@@ -408,7 +683,10 @@ function SimTerminal() {
   const done = mounted && count >= TERMINAL_LINES.length;
 
   return (
-    <div id="about-terminal" className="overflow-hidden rounded-xl border border-border bg-card/60 shadow-lg shadow-black/20">
+    <div
+      id="about-terminal"
+      className="overflow-hidden rounded-xl border border-border bg-card/60 shadow-lg shadow-black/20"
+    >
       {/* window header */}
       <div className="flex items-center gap-2 border-b border-border bg-background/40 px-4 py-3">
         <span className="h-3 w-3 rounded-full bg-foreground/15" />
@@ -423,9 +701,7 @@ function SimTerminal() {
         <div className="text-muted-foreground/70">Debian GNU/Linux 12 — tty1</div>
         <div className="mt-1 space-y-1.5">
           {mounted &&
-            TERMINAL_LINES.slice(0, count).map((line, i) => (
-              <TerminalLine key={i} line={line} />
-            ))}
+            TERMINAL_LINES.slice(0, count).map((line, i) => <TerminalLine key={i} line={line} />)}
           {done && (
             <div className="flex items-center gap-1 pt-1">
               <span className="text-primary">david@infra</span>
@@ -518,76 +794,117 @@ function WhatIBuild() {
   );
 }
 
-/* ---------------- Projects ---------------- */
+/* ---------------- Projects & Experiments ---------------- */
 
-function Projects() {
+type ProjectView = "projects" | "experiments";
+
+const viewFromHash = (): ProjectView =>
+  window.location.hash === "#experiments" ? "experiments" : "projects";
+
+function ProjectsAndExperiments() {
   const { t } = useLang();
+  const [view, setView] = useState<ProjectView>("projects");
+
+  useEffect(() => {
+    const syncHash = () => setView(viewFromHash());
+    syncHash();
+    window.addEventListener("hashchange", syncHash);
+    window.addEventListener("popstate", syncHash);
+    return () => {
+      window.removeEventListener("hashchange", syncHash);
+      window.removeEventListener("popstate", syncHash);
+    };
+  }, []);
+
+  const selectView = (value: string) => {
+    const next = value as ProjectView;
+    setView(next);
+    if (window.location.hash !== `#${next}`) {
+      window.history.pushState(null, "", `#${next}`);
+    }
+  };
+
   return (
-    <section id="projects" className="border-t border-border py-20 sm:py-28">
+    <section id="projects" className="scroll-mt-16 border-t border-border py-20 sm:py-28">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        <SectionTitle index="03" title={t.projects.title} desc={t.projects.desc} />
-        <div className="grid gap-5 sm:grid-cols-2">
-          {t.projects.items.map((p, i) => (
-            <Reveal key={p.title} delay={(i % 2) * 100}>
-              <div className="card-hover flex h-full flex-col rounded-xl border border-border bg-card/50 p-6">
-                <div className="flex items-center justify-between">
-                  <span className="rounded-md bg-primary/10 px-2.5 py-1 font-mono text-xs text-primary">
-                    {p.tag}
-                  </span>
-                  <Terminal size={16} className="text-muted-foreground" />
-                </div>
-                <h3 className="mt-5 font-display text-lg font-semibold text-foreground">
-                  {p.title}
-                </h3>
-                <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">{p.desc}</p>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {p.stack.map((s) => (
-                    <span
-                      key={s}
-                      className="rounded-md border border-border bg-background/40 px-2.5 py-1 font-mono text-xs text-muted-foreground"
-                    >
-                      {s}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
+        <div id="experiments" className="scroll-mt-16" />
+        <SectionTitle index="03" title={t.projects.sectionTitle} desc={t.projects.sectionDesc} />
+        <Tabs value={view} onValueChange={selectView} className="w-full">
+          <TabsList className="mb-8 grid h-auto w-full grid-cols-2 gap-1 border border-border bg-card/60 p-1 sm:mb-10 sm:inline-flex sm:w-auto">
+            <TabsTrigger
+              value="projects"
+              className="min-w-0 whitespace-normal px-2 py-3 text-center leading-snug data-[state=active]:bg-primary/15 data-[state=active]:text-primary sm:px-5"
+            >
+              {t.projects.title}
+            </TabsTrigger>
+            <TabsTrigger
+              value="experiments"
+              className="min-w-0 whitespace-normal px-2 py-3 text-center leading-snug data-[state=active]:bg-primary/15 data-[state=active]:text-primary sm:px-5"
+            >
+              {t.experiments.title}
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="projects" className="mt-0">
+            <p className="mb-6 text-sm text-muted-foreground sm:text-base">{t.projects.desc}</p>
+            <div className="grid gap-5 sm:grid-cols-2">
+              {t.projects.items.map((p, i) => (
+                <Reveal key={p.title} delay={(i % 2) * 100}>
+                  <div className="card-hover flex h-full flex-col rounded-xl border border-border bg-card/50 p-6">
+                    <div className="flex items-center justify-between">
+                      <span className="rounded-md bg-primary/10 px-2.5 py-1 font-mono text-xs text-primary">
+                        {p.tag}
+                      </span>
+                      <Terminal size={16} className="text-muted-foreground" />
+                    </div>
+                    <h3 className="mt-5 font-display text-lg font-semibold text-foreground">
+                      {p.title}
+                    </h3>
+                    <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">
+                      {p.desc}
+                    </p>
+                    <div className="mt-5 flex flex-wrap gap-2">
+                      {p.stack.map((s) => (
+                        <span
+                          key={s}
+                          className="rounded-md border border-border bg-background/40 px-2.5 py-1 font-mono text-xs text-muted-foreground"
+                        >
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </TabsContent>
+          <TabsContent value="experiments" className="mt-0">
+            <p className="mb-6 text-sm text-muted-foreground sm:text-base">{t.experiments.desc}</p>
+            <div className="grid gap-5 md:grid-cols-3">
+              {t.experiments.items.map((e, i) => {
+                const Icon = EXPERIMENT_ICONS[i]!;
+                return (
+                  <Reveal key={e.title} delay={i * 100}>
+                    <div className="card-hover h-full rounded-xl border border-border bg-card/40 p-6">
+                      <Icon size={22} className="text-primary" />
+                      <h3 className="mt-4 font-display text-base font-semibold text-foreground">
+                        {e.title}
+                      </h3>
+                      <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">
+                        {e.desc}
+                      </p>
+                    </div>
+                  </Reveal>
+                );
+              })}
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </section>
   );
 }
 
-/* ---------------- R&D / Experiments ---------------- */
 const EXPERIMENT_ICONS = [Eye, CircuitBoard, Cpu];
-
-function Experiments() {
-  const { t } = useLang();
-  return (
-    <section id="experiments" className="border-t border-border py-20 sm:py-28">
-      <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        <SectionTitle index="04" title={t.experiments.title} desc={t.experiments.desc} />
-        <div className="grid gap-5 md:grid-cols-3">
-          {t.experiments.items.map((e, i) => {
-            const Icon = EXPERIMENT_ICONS[i]!;
-            return (
-            <Reveal key={e.title} delay={i * 100}>
-              <div className="card-hover h-full rounded-xl border border-border bg-card/40 p-6">
-                <Icon size={22} className="text-primary" />
-                <h3 className="mt-4 font-display text-base font-semibold text-foreground">
-                  {e.title}
-                </h3>
-                <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">{e.desc}</p>
-              </div>
-            </Reveal>
-            );
-          })}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 /* ---------------- Tech Stack ---------------- */
 const STACK = [
@@ -623,7 +940,7 @@ function TechStack() {
   return (
     <section id="stack" className="border-t border-border py-20 sm:py-28">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        <SectionTitle index="05" title={t.stack.title} desc={t.stack.desc} />
+        <SectionTitle index="04" title={t.stack.title} desc={t.stack.desc} />
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {STACK.map((s, i) => (
             <Reveal key={s.title} delay={(i % 3) * 100}>
@@ -632,7 +949,9 @@ function TechStack() {
                   <div className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary">
                     <s.icon size={18} />
                   </div>
-                  <h3 className="font-display text-base font-semibold text-foreground">{s.title}</h3>
+                  <h3 className="font-display text-base font-semibold text-foreground">
+                    {s.title}
+                  </h3>
                 </div>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {s.items.map((it) => (
@@ -659,7 +978,7 @@ function Contact() {
   return (
     <section id="contact" className="border-t border-border py-20 sm:py-28">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        <SectionTitle index="06" title={t.contact.title} />
+        <SectionTitle index="05" title={t.contact.title} />
         <Reveal>
           <div className="rounded-2xl border border-border bg-card/50 p-8 text-center sm:p-12">
             <p className="font-display text-2xl font-semibold text-foreground sm:text-3xl">
@@ -708,9 +1027,7 @@ function Footer() {
         <p className="font-mono text-xs text-muted-foreground">
           David Aramayo — Backend & AI Automation Engineer
         </p>
-        <p className="font-mono text-xs text-muted-foreground">
-          {t.footer.tagline}
-        </p>
+        <p className="font-mono text-xs text-muted-foreground">{t.footer.tagline}</p>
       </div>
     </footer>
   );
@@ -720,19 +1037,20 @@ function Footer() {
 function Portfolio() {
   return (
     <LangProvider>
-      <div className="min-h-screen bg-background text-foreground">
-        <Nav />
-        <main>
-          <Hero />
-          <About />
-          <WhatIBuild />
-          <Projects />
-          <Experiments />
-          <TechStack />
-          <Contact />
-        </main>
-        <Footer />
-      </div>
+      <ThemeProvider>
+        <div className="min-h-screen bg-background text-foreground">
+          <Nav />
+          <main>
+            <Hero />
+            <About />
+            <WhatIBuild />
+            <ProjectsAndExperiments />
+            <TechStack />
+            <Contact />
+          </main>
+          <Footer />
+        </div>
+      </ThemeProvider>
     </LangProvider>
   );
 }

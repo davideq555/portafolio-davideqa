@@ -8,10 +8,17 @@ const dict = {
       about: "About",
       work: "What I Build",
       projects: "Projects",
-      experiments: "R&D",
       stack: "Tech Stack",
       contact: "Contact",
-      cta: "Get in touch",
+    },
+    theme: {
+      label: "Theme",
+      open: "Open theme selector",
+      close: "Close theme selector",
+      dialogTitle: "Choose a theme",
+      search: "Select Theme...",
+      noResults: "No themes found",
+      documentation: "Recognizable editor theme catalog",
     },
     hero: {
       pill: "Available for backend & AI automation work",
@@ -24,7 +31,12 @@ const dict = {
       title: "About",
       p1: "I started in backend engineering building APIs and data-driven systems with Python, PostgreSQL and SQL Server. As systems grew more complex, I moved into automating processes with AI — AI Agents, RAG pipelines and LLM-powered applications that connect internal tools, enterprise systems and external services.",
       p2: "Today I'm deepening my work in infrastructure and DevOps, deploying and operating complete solutions on Linux, Docker, VPS and Dokploy with CI/CD pipelines through GitHub Actions. My focus is building and shipping systems end-to-end — not just interfaces, but the full stack that makes them run.",
-      badges: ["Backend & APIs", "AI Agents & RAG", "Infrastructure & DevOps", "End-to-end systems"],
+      badges: [
+        "Backend & APIs",
+        "AI Agents & RAG",
+        "Infrastructure & DevOps",
+        "End-to-end systems",
+      ],
     },
     work: {
       title: "What I Build",
@@ -48,6 +60,9 @@ const dict = {
       ],
     },
     projects: {
+      sectionTitle: "Projects & Experiments",
+      sectionDesc:
+        "Backend systems, AI automation and technical exploration — from shipped solutions to new ideas.",
       title: "Featured Projects",
       desc: "Systems, not just interfaces — backend, AI automation and complete end-to-end solutions.",
       items: [
@@ -113,10 +128,17 @@ const dict = {
       about: "Sobre mí",
       work: "Qué construyo",
       projects: "Proyectos",
-      experiments: "I+D",
       stack: "Stack",
       contact: "Contacto",
-      cta: "Hablemos",
+    },
+    theme: {
+      label: "Tema",
+      open: "Abrir selector de tema",
+      close: "Cerrar selector de tema",
+      dialogTitle: "Elegí un tema",
+      search: "Seleccionar tema...",
+      noResults: "No se encontraron temas",
+      documentation: "Catálogo de temas de editores reconocibles",
     },
     hero: {
       pill: "Disponible para proyectos de backend y automatización con IA",
@@ -129,7 +151,12 @@ const dict = {
       title: "Sobre mí",
       p1: "Comencé en ingeniería backend construyendo APIs y sistemas basados en datos con Python, PostgreSQL y SQL Server. A medida que los sistemas se volvieron más complejos, pasé a automatizar procesos con IA — AI Agents, pipelines RAG y aplicaciones con LLMs que conectan herramientas internas, sistemas empresariales y servicios externos.",
       p2: "Hoy profundizo en infraestructura y DevOps, desplegando y operando soluciones completas en Linux, Docker, VPS y Dokploy con pipelines de CI/CD en GitHub Actions. Mi enfoque es construir y lanzar sistemas de punta a punta — no solo interfaces, sino todo el stack que los hace funcionar.",
-      badges: ["Backend & APIs", "AI Agents & RAG", "Infraestructura & DevOps", "Sistemas end-to-end"],
+      badges: [
+        "Backend & APIs",
+        "AI Agents & RAG",
+        "Infraestructura & DevOps",
+        "Sistemas end-to-end",
+      ],
     },
     work: {
       title: "Qué construyo",
@@ -153,6 +180,9 @@ const dict = {
       ],
     },
     projects: {
+      sectionTitle: "Proyectos y experimentos",
+      sectionDesc:
+        "Sistemas backend, automatización con IA y exploración técnica: de soluciones entregadas a nuevas ideas.",
       title: "Proyectos destacados",
       desc: "Sistemas, no solo interfaces — backend, automatización con IA y soluciones completas de punta a punta.",
       items: [

@@ -35,22 +35,16 @@ El concepto central del portfolio debe ser:
    * AI & Automation
    * Infrastructure & DevOps
 
-4. **Featured Projects**
-   Mostrar proyectos reales con tarjetas visuales y descripción breve.
-   Incluir proyectos de backend, automatización con IA, RAG, IoT y otros experimentos técnicos.
-   Destacar especialmente proyectos que demuestren sistemas completos y no solamente interfaces.
+4. **Projects & Experiments**
+   Unificar Featured Projects y R&D / Experiments en una sola sección, con dos pestañas visibles: **Proyectos destacados** y **I+D / Experimentos**. Mostrar por defecto los proyectos destacados y permitir cambiar de vista sin salir de la sección. Las pestañas deben ser accesibles mediante teclado, indicar claramente cuál está activa y funcionar bien en móviles.
+   * **Proyectos destacados:** mostrar proyectos reales con tarjetas visuales y descripción breve. Incluir proyectos de backend, automatización con IA, RAG e IoT. Priorizar los que demuestren sistemas completos, no solo interfaces.
+   * **I+D / Experimentos:** reunir proyectos personales y exploratorios, como el sistema IoT de detección de somnolencia en conductores, sistemas RAG para documentación empresarial y experimentos con IA, computer vision y nuevas tecnologías.
 
-5. **R&D / Experiments**
-   Sección para proyectos personales y experimentales, como:
-   * Sistema IoT para detección de somnolencia en conductores.
-   * Sistemas RAG para documentación empresarial.
-   * Experimentos con IA, computer vision y nuevas tecnologías.
-
-6. **Tech Stack**
+5. **Tech Stack**
    Mostrar tecnologías agrupadas por categorías en lugar de una lista gigante:
    Backend, Databases, AI & Automation, Infrastructure y DevOps.
 
-7. **Contact**
+6. **Contact**
    Sección simple para contacto profesional y enlaces a GitHub y LinkedIn.
 
 ### Diseño
