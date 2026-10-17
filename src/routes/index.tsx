@@ -25,6 +25,7 @@ import {
   Images,
   ChevronLeft,
   ChevronRight,
+  FileCode,
 } from "lucide-react";
 import { LangProvider, useLang } from "@/lib/i18n";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -1125,9 +1126,14 @@ const EXPERIMENT_ICONS = [Eye, CircuitBoard, Cpu];
 /* ---------------- Tech Stack ---------------- */
 const STACK = [
   {
-    icon: Server,
-    title: "Backend",
-    items: ["Python", "FastAPI", "Django", "REST APIs", "GraphQL"],
+    icon: FileCode,
+    title: "Languages",
+    items: ["Python", "Javascript", "PHP", "Genexus"],
+  },
+  {
+    icon: Boxes,
+    title: "Frameworks",
+    items: ["FastAPI", "Django", "Laravel"],
   },
   {
     icon: Database,
@@ -1137,12 +1143,12 @@ const STACK = [
   {
     icon: Bot,
     title: "AI & Automation",
-    items: ["AI Agents", "RAG", "LLMs", "LangChain", "Computer Vision"],
+    items: ["AI Agents", "RAG", "LLMs", "Jev", "Computer Vision"],
   },
   {
-    icon: Boxes,
+    icon: Server,
     title: "Infrastructure",
-    items: ["Linux", "Docker", "VPS", "Dokploy", "Nginx"],
+    items: ["Linux", "Windows Server", "Docker", "VPS", "AWS", "GCP"],
   },
   {
     icon: GitBranch,
@@ -1205,13 +1211,13 @@ function Contact() {
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
               <a
-                href="mailto:david@example.com"
+                href="mailto:davideq555@gmail.com"
                 className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-transform hover:-translate-y-0.5 sm:w-auto"
               >
                 <Mail size={16} /> Email
               </a>
               <a
-                href="https://github.com/davidaramayo"
+                href="https://github.com/davideq555"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-border px-6 py-3 text-sm font-medium text-foreground transition-colors hover:border-primary hover:text-primary sm:w-auto"
@@ -1219,7 +1225,7 @@ function Contact() {
                 <Github size={16} /> GitHub
               </a>
               <a
-                href="https://linkedin.com/in/davidaramayo"
+                href="https://www.linkedin.com/in/davideqa/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-border px-6 py-3 text-sm font-medium text-foreground transition-colors hover:border-primary hover:text-primary sm:w-auto"
