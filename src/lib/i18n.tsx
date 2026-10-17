@@ -83,6 +83,7 @@ const dict = {
           links: {
             repo: "https://github.com/davideq555/cotorra_app",
             live: "https://cotorra.com.ar",
+            gallery: ["/projects/cotorra/app_modo_dark.png", "/projects/cotorra/dashboard.png"],
           },
         },
         {
@@ -92,7 +93,7 @@ const dict = {
           stack: ["OCR", "OpenAI", "LLMs", "Python"],
           links: {
             repo: "https://github.com/davideq555/app_reconocimiento_fotos",
-            gallery: ["https://placehold.co/1200x800/png?text=RAG+Document+Flow"],
+            gallery: ["/projects/ocr-image/dashboard.png"],
           },
         },
         {
@@ -122,7 +123,7 @@ const dict = {
         {
           title: "Convoy safe (IoT)",
           desc: "Early-warning system for hazards along the route for convoys of vehicles traveling on mountain roads without cell phone service, GPS, or internet access.",
-          stack: ["IoT", "Python", "Radio", "Computer Vision"],
+          stack: ["Raspberry Pi", "Python", "LoRa"],
           links: {
             repo: "https://github.com/davideq555/convoy-safe",
           },
@@ -230,6 +231,7 @@ const dict = {
           links: {
             repo: "https://github.com/davideq555/cotorra_app",
             live: "https://cotorra.com.ar",
+            gallery: ["/projects/cotorra/app_modo_dark.png", "/projects/cotorra/dashboard.png"],
           },
         },
         {
@@ -239,7 +241,7 @@ const dict = {
           stack: ["OCR", "OpenAI", "LLMs", "Python"],
           links: {
             repo: "https://github.com/davideq555/app_reconocimiento_fotos",
-            gallery: ["https://placehold.co/1200x800/png?text=RAG+Document+Flow"],
+            gallery: ["/projects/ocr-image/dashboard.png"],
           },
         },
         {
@@ -269,7 +271,7 @@ const dict = {
         {
           title: "Convoy seguro (IoT)",
           desc: "Sistema de alerta temprana de peligros en ruta para convoys de vehículos que circulan por caminos de montaña, sin cobertura celular, sin GPS y sin acceso a internet.",
-          stack: ["IoT", "Python", "Radio", "Computer Vision"],
+          stack: ["Raspberry Pi", "Python", "LoRa"],
           links: {
             repo: "https://github.com/davideq555/convoy-safe",
           },
