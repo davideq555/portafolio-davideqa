@@ -18,7 +18,7 @@ const dict = {
       dialogTitle: "Choose a theme",
       search: "Select Theme...",
       noResults: "No themes found",
-      documentation: "Recognizable editor theme catalog",
+      documentation: "Available themes",
     },
     hero: {
       pill: "Available for backend & AI automation work",
@@ -76,50 +76,41 @@ const dict = {
       },
       items: [
         {
-          tag: "Backend",
-          title: "Multi-tenant API Platform",
-          desc: "A production backend with FastAPI and PostgreSQL serving multi-tenant APIs, auth, role-based access and async task workers. Designed for scale and clean data isolation.",
-          stack: ["Python", "FastAPI", "PostgreSQL", "Redis"],
+          tag: "Website and Mobile",
+          title: "Cotorra",
+          desc: "Development of a web and mobile platform for the management of and collaborative access to university resources. The system supports different types of users, as well as mechanisms for content management and moderation.",
+          stack: ["FastAPI", "PostgreSQL", "Redis", "Flutter", "DevOps"],
           links: {
-            repo: "https://github.com/davidaramayo/example-multitenant-api",
-            live: "https://example.com/multitenant-api",
-            gallery: [
-              "https://placehold.co/1200x800/png?text=API+Architecture",
-              "https://placehold.co/1200x800/png?text=Tenant+Dashboard",
-            ],
+            repo: "https://github.com/davideq555/cotorra_app",
+            live: "https://cotorra.com.ar",
           },
         },
         {
-          tag: "AI Automation",
-          title: "Intelligent Document Assistant",
-          desc: "RAG system over enterprise documentation with LLM-powered Q&A, citations and automatic ingestion pipelines. Connects internal knowledge to a conversational interface.",
-          stack: ["LangChain", "RAG", "LLMs", "Python"],
+          tag: "OCR image",
+          title: "Photo Recognition",
+          desc: "A Python desktop application that finds participant numbers in photos using local OCR (RapidOCR), Ollama, OpenAI, Gemini, or an OpenAI-compatible vision service.",
+          stack: ["OCR", "OpenAI", "LLMs", "Python"],
           links: {
-            repo: "https://github.com/davidaramayo/example-document-assistant",
+            repo: "https://github.com/davideq555/app_reconocimiento_fotos",
             gallery: ["https://placehold.co/1200x800/png?text=RAG+Document+Flow"],
           },
         },
         {
-          tag: "AI Agents",
-          title: "Autonomous Workflow Agents",
-          desc: "AI Agents that orchestrate APIs, databases and external services to automate multi-step business processes end-to-end with tool use and memory.",
-          stack: ["AI Agents", "Tools", "OpenAI"],
+          tag: "Backend",
+          title: "WhatsApp Contact Management",
+          desc: "An API project developed with FastAPI to manage WhatsApp contacts and chats in order to integrate them with n8n agents. It includes features for managing accounts and labels, as well as for linking them to chats.",
+          stack: ["AI Agents", "n8n", "FastAPI"],
           links: {
-            live: "https://example.com/autonomous-agents",
-            gallery: [
-              "https://placehold.co/1200x800/png?text=Agent+Workflow",
-              "https://placehold.co/1200x800/png?text=Tool+Execution",
-            ],
+            repo: "https://github.com/davideq555/whatsapp-contactos",
           },
         },
         {
-          tag: "Integration",
-          title: "Enterprise API Connector",
-          desc: "Bi-directional integration layer between internal systems and external services, with queueing, retries and observability for reliable data flow.",
-          stack: ["Python", "APIs", "SQL Server"],
+          tag: "Management System",
+          title: "Metalnor SIM",
+          desc: "Comprehensive Modular System (SIM) for Metalnor. It integrates the comprehensive management of all areas—including HR, accounting, logistics, purchasing, and branch offices, among others—into a single platform.",
+          stack: ["Python", "Django", "SQL Server"],
           links: {
-            repo: "https://github.com/davidaramayo/example-api-connector",
-            live: "https://example.com/api-connector",
+            live: "https://sim.metalnor.com.ar/",
           },
         },
       ],
@@ -129,30 +120,17 @@ const dict = {
       desc: "Personal projects and technical experiments where I explore new ground.",
       items: [
         {
-          title: "Driver Drowsiness Detection (IoT)",
-          desc: "Computer vision system on edge hardware that detects driver fatigue in real time and triggers alerts. Combines CV models with sensor integration.",
+          title: "Convoy safe (IoT)",
+          desc: "Early-warning system for hazards along the route for convoys of vehicles traveling on mountain roads without cell phone service, GPS, or internet access.",
           links: {
-            repo: "https://github.com/davidaramayo/example-drowsiness-iot",
-            gallery: [
-              "https://placehold.co/1200x800/png?text=IoT+Prototype",
-              "https://placehold.co/1200x800/png?text=Driver+Detection",
-            ],
+            repo: "https://github.com/davideq555/convoy-safe",
           },
         },
         {
           title: "RAG for Enterprise Docs",
           desc: "Experiment building retrieval-augmented generation over large internal documentation sets, testing chunking strategies and vector stores.",
           links: {
-            live: "https://example.com/enterprise-rag-lab",
-            gallery: ["https://placehold.co/1200x800/png?text=Enterprise+RAG+Lab"],
-          },
-        },
-        {
-          title: "Computer Vision & AI Labs",
-          desc: "Hands-on experiments with CV models, LLMs and new automation tooling — exploring what's practical before bringing it into production systems.",
-          links: {
-            repo: "https://github.com/davidaramayo/example-ai-labs",
-            live: "https://example.com/ai-labs",
+            repo: "https://github.com/davideq555/rag_documentos",
           },
         },
       ],
@@ -185,7 +163,7 @@ const dict = {
       dialogTitle: "Elegí un tema",
       search: "Seleccionar tema...",
       noResults: "No se encontraron temas",
-      documentation: "Catálogo de temas de editores reconocibles",
+      documentation: "Temas disponibles",
     },
     hero: {
       pill: "Disponible para proyectos de backend y automatización con IA",
@@ -243,50 +221,41 @@ const dict = {
       },
       items: [
         {
-          tag: "Backend",
-          title: "Plataforma API Multi-tenant",
-          desc: "Backend en producción con FastAPI y PostgreSQL sirviendo APIs multi-tenant, autenticación, control de acceso por roles y workers asíncronos. Diseñado para escalar con aislamiento de datos limpio.",
-          stack: ["Python", "FastAPI", "PostgreSQL", "Redis"],
+          tag: "Pagina web y movil",
+          title: "Cotorra",
+          desc: "Desarrollo de una plataforma web y móvil para la gestión y acceso colaborativo a recursos universitarios. El sistema cuenta con diferentes tipos de usuarios, mecanismos de gestión y moderación del contenido.",
+          stack: ["FastAPI", "PostgreSQL", "Redis", "Flutter", "DevOps"],
           links: {
-            repo: "https://github.com/davidaramayo/example-multitenant-api",
-            live: "https://example.com/multitenant-api",
-            gallery: [
-              "https://placehold.co/1200x800/png?text=API+Architecture",
-              "https://placehold.co/1200x800/png?text=Tenant+Dashboard",
-            ],
+            repo: "https://github.com/davideq555/cotorra_app",
+            live: "https://cotorra.com.ar",
           },
         },
         {
-          tag: "Automatización IA",
-          title: "Asistente Inteligente de Documentos",
-          desc: "Sistema RAG sobre documentación empresarial con preguntas y respuestas potenciadas por LLM, citas y pipelines de ingesta automática. Conecta el conocimiento interno con una interfaz conversacional.",
-          stack: ["LangChain", "RAG", "LLMs", "Python"],
+          tag: "OCR imagenes",
+          title: "Photo Recognition",
+          desc: "Una aplicación de escritorio en Python que identifica el número de participantes en fotografías utilizando OCR local (RapidOCR), Ollama, OpenAI, Gemini o un servicio de visión compatible con OpenAI.",
+          stack: ["OCR", "OpenAI", "LLMs", "Python"],
           links: {
-            repo: "https://github.com/davidaramayo/example-document-assistant",
+            repo: "https://github.com/davideq555/app_reconocimiento_fotos",
             gallery: ["https://placehold.co/1200x800/png?text=RAG+Document+Flow"],
           },
         },
         {
-          tag: "AI Agents",
-          title: "Agentes Autónomos de Workflows",
-          desc: "AI Agents que orquestan APIs, bases de datos y servicios externos para automatizar procesos de negocio de múltiples pasos de punta a punta, con uso de herramientas y memoria.",
-          stack: ["AI Agents", "Tools", "OpenAI"],
+          tag: "Backend",
+          title: "Gestion contactos Whatsapp",
+          desc: "Proyecto API desarrollada con FastAPI para gestionar contactos y chats de WhatsApp para integracion con agentes en n8n. Incluye funcionalidades para manejar cuentas, etiquetas, y la asociación de estas con los chats.",
+          stack: ["AI Agents", "n8n", "FastAPI"],
           links: {
-            live: "https://example.com/autonomous-agents",
-            gallery: [
-              "https://placehold.co/1200x800/png?text=Agent+Workflow",
-              "https://placehold.co/1200x800/png?text=Tool+Execution",
-            ],
+            repo: "https://github.com/davideq555/whatsapp-contactos",
           },
         },
         {
-          tag: "Integración",
-          title: "Conector de APIs Empresariales",
-          desc: "Capa de integración bidireccional entre sistemas internos y servicios externos, con colas, reintentos y observabilidad para un flujo de datos confiable.",
-          stack: ["Python", "APIs", "SQL Server"],
+          tag: "Sistema de gestión",
+          title: "Metalnor SIM",
+          desc: "Sistema integral modular (SIM) para la empresa de Metalnor. Integra en una sola plataforma la gestión integral de todas las areas como RRHH, contabilidad, logistica, compras, sucursales, entre otras areas.",
+          stack: ["Python", "Django", "SQL Server"],
           links: {
-            repo: "https://github.com/davidaramayo/example-api-connector",
-            live: "https://example.com/api-connector",
+            live: "https://sim.metalnor.com.ar/",
           },
         },
       ],
@@ -296,30 +265,18 @@ const dict = {
       desc: "Proyectos personales y experimentos técnicos donde exploro nuevos terrenos.",
       items: [
         {
-          title: "Detección de Somnolencia en Conductores (IoT)",
-          desc: "Sistema de visión por computadora en hardware edge que detecta fatiga del conductor en tiempo real y dispara alertas. Combina modelos de CV con integración de sensores.",
+          title: "Convoy seguro (IoT)",
+          desc: "Sistema de alerta temprana de peligros en ruta para convoys de vehículos que circulan por caminos de montaña, sin cobertura celular, sin GPS y sin acceso a internet.",
           links: {
-            repo: "https://github.com/davidaramayo/example-drowsiness-iot",
-            gallery: [
-              "https://placehold.co/1200x800/png?text=IoT+Prototype",
-              "https://placehold.co/1200x800/png?text=Driver+Detection",
-            ],
+            repo: "https://github.com/davideq555/convoy-safe",
           },
         },
         {
           title: "RAG para Documentación Empresarial",
           desc: "Experimento de generación aumentada por recuperación sobre grandes conjuntos de documentación interna, probando estrategias de chunking y vector stores.",
           links: {
-            live: "https://example.com/enterprise-rag-lab",
+            repo: "https://github.com/davideq555/rag_documentos",
             gallery: ["https://placehold.co/1200x800/png?text=Enterprise+RAG+Lab"],
-          },
-        },
-        {
-          title: "Laboratorios de Computer Vision e IA",
-          desc: "Experimentos prácticos con modelos de CV, LLMs y nuevas herramientas de automatización — explorando qué es práctico antes de llevarlo a sistemas en producción.",
-          links: {
-            repo: "https://github.com/davidaramayo/example-ai-labs",
-            live: "https://example.com/ai-labs",
           },
         },
       ],
