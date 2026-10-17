@@ -424,7 +424,7 @@ function Nav() {
           href="#top"
           className="font-display text-base font-semibold tracking-tight text-foreground"
         >
-          David<span className="text-primary">.</span>
+          Deqa<span className="text-primary">.</span>
         </a>
         <div className="hidden items-center gap-7 md:flex">
           {links.map((l) => (

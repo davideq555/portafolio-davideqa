@@ -134,6 +134,7 @@ const dict = {
           stack: ["RAG", "Python", "LLMs", "Vector Stores"],
           links: {
             repo: "https://github.com/davideq555/rag_documentos",
+            gallery: ["/projects/rag-documentos/dashboard-rag.png"],
           },
         },
       ],
@@ -282,7 +283,7 @@ const dict = {
           stack: ["RAG", "Python", "LLMs", "Vector Stores"],
           links: {
             repo: "https://github.com/davideq555/rag_documentos",
-            gallery: ["https://placehold.co/1200x800/png?text=Enterprise+RAG+Lab"],
+            gallery: ["/projects/rag-documentos/dashboard-rag.png"],
           },
         },
       ],
