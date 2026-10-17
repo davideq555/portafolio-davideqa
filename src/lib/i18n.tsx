@@ -122,6 +122,7 @@ const dict = {
         {
           title: "Convoy safe (IoT)",
           desc: "Early-warning system for hazards along the route for convoys of vehicles traveling on mountain roads without cell phone service, GPS, or internet access.",
+          stack: ["IoT", "Python", "Radio", "Computer Vision"],
           links: {
             repo: "https://github.com/davideq555/convoy-safe",
           },
@@ -129,6 +130,7 @@ const dict = {
         {
           title: "RAG for Enterprise Docs",
           desc: "Experiment building retrieval-augmented generation over large internal documentation sets, testing chunking strategies and vector stores.",
+          stack: ["RAG", "Python", "LLMs", "Vector Stores"],
           links: {
             repo: "https://github.com/davideq555/rag_documentos",
           },
@@ -267,6 +269,7 @@ const dict = {
         {
           title: "Convoy seguro (IoT)",
           desc: "Sistema de alerta temprana de peligros en ruta para convoys de vehículos que circulan por caminos de montaña, sin cobertura celular, sin GPS y sin acceso a internet.",
+          stack: ["IoT", "Python", "Radio", "Computer Vision"],
           links: {
             repo: "https://github.com/davideq555/convoy-safe",
           },
@@ -274,6 +277,7 @@ const dict = {
         {
           title: "RAG para Documentación Empresarial",
           desc: "Experimento de generación aumentada por recuperación sobre grandes conjuntos de documentación interna, probando estrategias de chunking y vector stores.",
+          stack: ["RAG", "Python", "LLMs", "Vector Stores"],
           links: {
             repo: "https://github.com/davideq555/rag_documentos",
             gallery: ["https://placehold.co/1200x800/png?text=Enterprise+RAG+Lab"],

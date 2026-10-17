@@ -1093,6 +1093,16 @@ function ProjectsAndExperiments() {
                       <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">
                         {e.desc}
                       </p>
+                      <div className="mt-5 flex flex-wrap gap-2">
+                        {e.stack.map((s) => (
+                          <span
+                            key={s}
+                            className="rounded-md border border-border bg-background/40 px-2.5 py-1 font-mono text-xs text-muted-foreground"
+                          >
+                            {s}
+                          </span>
+                        ))}
+                      </div>
                       <ProjectActions
                         links={e.links}
                         labels={t.projects.actions}
